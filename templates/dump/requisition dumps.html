@@ -1,0 +1,253 @@
+<div id="product_delivery_section">
+    <div class="card bg-light mb-5">
+        <div class="card-body">
+            <h2 class="mb-4">Authorized Person's Information</h2>
+            <hr>
+            <div class="mb-4 col-md-6">
+                <label for="bio_kcp_dob">Delivery Date</label>
+                <div class="input-group">
+                    <input type="date" class="form-control" id="bio_kcp_dob" name="bio_kcp_dob"
+                        value="{{ customer.kcp_dob|date:'Y-m-d' }}" disabled>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label for="authorized_person_name">Authorized Person Name</label>
+                <!--There should be suggestion for name form previous input based on BS code or if 
+                                                                                KAM wants he can put new name-->
+                <div class="input-group">
+                    <input type="text" class="form-control" id="authorized_person_name"
+                        name="authorized_person_name">
+                    <div class="invalid-feedback" style="width: 100%;">
+                        This is a field.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="authorized_person_contact_no">Authorized Person's Contact
+                    no</label>
+                <!--There should be suggestion for name form previous input based on BS code or if 
+                                                                                KAM wants he can put new name-->
+                <div class="input-group">
+                    <input type="text" class="form-control" id="authorized_person_contact_no"
+                        name="authorized_person_contact_no">
+                    <div class="invalid-feedback" style="width: 100%;">
+                        This is a field.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="authorized_person_email">Authorized Person's E-mail</label>
+                <!--There should be suggestion for name form previous input based on BS code or if 
+                                                                                KAM wants he can put new name-->
+                <div class="input-group">
+                    <input type="text" class="form-control" id="authorized_person_email"
+                        name="authorized_person_email">
+                    <div class="invalid-feedback" style="width: 100%;">
+                        This is a field.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="authorized_person_designation">Authorized Person's
+                    Designation</label>
+                <!--There should be suggestion for name form previous input based on BS code or if 
+                                                                                KAM wants he can put new name-->
+                <div class="input-group">
+                    <input type="text" class="form-control" id="authorized_person_designation"
+                        name="authorized_person_designation">
+                    <div class="invalid-feedback" style="width: 100%;">
+                        This is a field.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="authorized_person_nid_number">Authorized Person's NID
+                    number</label>
+                <!--There should be suggestion for name form previous input based on BS code or if 
+                KAM wants he can put new name-->
+                <!--THis will be only the NID number nothing else-->
+                <div class="input-group">
+                    <input type="text" class="form-control" id="authorized_person_nid_number"
+                        name="authorized_person_nid_number">
+                    <div class="invalid-feedback" style="width: 100%;">
+                        This is a field.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7 mb-4">
+                <label for="delivery_method">Delivery Method</label>
+
+                <!--product name should be visible to copc.-->
+                <select class="custom-select d-block w-100" id="delivery" name="delivery_method">
+                    <option value="" disabled selected>Choose</option>
+                    <option value="DELIVER_TO_DELIVERY_AGENCY">Delivery to Delivery Agency
+                    </option>
+                    <option value="DELIVERY_THROUGH_COURIER">Delivery through Courier</option>
+                    <option value="OTC DELIVERY TO KAM/ZM">OTC Delivery to KAM/ZM</option>
+                </select>
+                <div class="invalid-feedback">
+                    Please select a valid category.
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="mr_upload_section">
+    <div class="card bg-light mb-5" id="">
+        <div class="card-body">
+            <h2 class="mb-4">MR Created Upload</h2>
+            <hr>
+            <div class="form-group">
+                <label for="signed_pod">Upload Money Reciept</label>
+                <input type="file" class="form-control-file" id="signed_pod" name="signed_pod">
+            </div>
+        </div>
+    </div>
+</div>
+<button onclick="return confirm('Are you sure?');" class="btn btn-primary btn-lg btn-block col-md-4"
+    type="submit">Save Draft</button>
+</form>
+<div>
+
+    <button type="submit" class="btn btn-success btn-lg btn-block col-md-4" data-toggle="modal"
+        data-target="#submit_modal">Submit</button>
+
+    <button type="button" class="btn btn-danger btn-lg btn-block col-md-4" data-toggle="modal"
+        data-target="#reject_modal">Reject</button>
+</div>
+</div>
+
+
+<div id="request_for_btrc_approval_section">
+    <div class="card bg-light mb-5" id="request_for_btrc_approval_attachments">
+        <div class="card-body">
+            <h2 class="mb-4">Attachments</h2>
+            <hr>
+            <div class="form-group">
+                <label for="signed_pod">Signed POD (BTRC Form No - 20191003) with MSISDN only</label>
+                <input type="file" class="form-control-file" id="signed_pod" name="signed_pod">
+            </div>
+
+            <div class="form-group">
+                <label for="mobile_number_list">Mobile Number List in Excel</label>
+                <input type="file" class="form-control-file" id="mobile_number_list"
+                    name="mobile_number_list">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="btrc_approval_checklist">
+    <div class="card bg-light mb-5" id="btrc_approval_checklist_checks">
+        <div class="card-body">
+            <h2 class="mb-4">Approval Checklist</h2>
+            <hr>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                <label class="form-check-label" for="defaultCheck1">
+                    Work Order/Customer Application
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
+                <label class="form-check-label" for="defaultCheck2">
+                    BTRC Form No - 20191000
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck3">
+                <label class="form-check-label" for="defaultCheck3">
+                    Proof of Company Identity
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck4">
+                <label class="form-check-label" for="defaultCheck4">
+                    BTRC Form 20191001
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck5">
+                <label class="form-check-label" for="defaultCheck5">
+                    BTRC Form 20191002
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck6">
+                <label class="form-check-label" for="defaultCheck6">
+                    BTRC Form 20191003
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck7">
+                <label class="form-check-label" for="defaultCheck7">
+                    NID Copy of Authorized KCP
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck8">
+                <label class="form-check-label" for="defaultCheck8">
+                    Agreement Copy
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="btrc_approved_documents">
+    <div class="card bg-light mb-5" id="">
+        <div class="card-body">
+            <h2 class="mb-4">BTRC Approved Attachments</h2>
+            <hr>
+            <div class="form-group">
+                <label for="signed_pod">Approved BTRC Form No - 2019000</label>
+                <input type="file" class="form-control-file" id="signed_pod" name="signed_pod">
+            </div>
+
+            <div class="form-group">
+                <label for="signed_pod">Approved BTRC Form No - 2019001</label>
+                <input type="file" class="form-control-file" id="signed_pod" name="signed_pod">
+            </div>
+
+            <div class="form-group">
+                <label for="signed_pod">Approved BTRC Form No - 2019002</label>
+                <input type="file" class="form-control-file" id="signed_pod" name="signed_pod">
+            </div>
+
+            <div class="form-group">
+                <label for="signed_pod">Approved BTRC Form No - 2019003</label>
+                <input type="file" class="form-control-file" id="signed_pod" name="signed_pod">
+            </div>
+            <div class="form-group">
+                <label for="signed_pod">Approved BTRC Form No - 2019003 (with Users Info)</label>
+                <input type="file" class="form-control-file" id="signed_pod" name="signed_pod">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="sales_order_section">
+    <div class="card bg-light mb-5" id="">
+        <div class="card-body">
+            <h2 class="mb-4">Delivery Challan Company</h2>
+            <hr>
+            <div class="form-group">
+                <label for="signed_pod">Delivery Challan</label>
+                <input type="file" class="form-control-file" id="signed_pod" name="signed_pod">
+            </div>
+            <div class="mb-4">
+                <label for="bde_pos_code">Delivery Order Number</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="bde_pos_code" name="bde_pos_code">
+                    <div class="invalid-feedback" style="width: 100%;">
+                        This is a field.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

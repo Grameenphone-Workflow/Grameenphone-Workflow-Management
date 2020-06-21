@@ -1,0 +1,241 @@
+
+                <!-- <div class="card bg-light mb-5" id="kcp_information">
+                    <div class="card-body">
+                        <h2 class="mb-4">KCP Information</h2>
+                        <hr>
+
+                        <div class="mb-4 col-md-6">
+                            <label for="bio_kcp_first_name">Biometric KCP Name (First Name)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="bio_kcp_first_name"
+                                    value="{{ customer.kcp_first_name | default_if_none:'' }}" name="bio_kcp_first_name"
+                                    disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-md-6">
+                            <label for="bio_kcp_last_name">Biometric KCP Name (Last Name)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="bio_kcp_last_name"
+                                    value="{{ customer.kcp_last_name | default_if_none:'' }}" name="bio_kcp_last_name"
+                                    disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-md-6">
+                            <label for="bio_kcp_contact_number">Biometric KCP Contact Number</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="bio_kcp_contact_number"
+                                    value="{{ customer.kcp_contact_number | default_if_none:'' }}"
+                                    name="bio_kcp_contact_number" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-md-6">
+                            <label for="kcp_email_1">KCP Email-1</label>
+                            <div class="input-group">
+                                <input type="email" class="form-control" id="kcp_email_1" name="kcp_email_1"
+                                    value="{{ customer.kcp_email_1 | default_if_none:'' }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-md-6">
+                            <label for="kcp_email_2">KCP Email-2</label>
+                            <div class="input-group">
+                                <input type="email" class="form-control" id="kcp_email_2" name="kcp_email_2"
+                                    value="{{ customer.kcp_email_2 | default_if_none:'' }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-md-6">
+                            <label for="kcp_email_3">KCP Email-3</label>
+                            <div class="input-group">
+                                <input type="email" class="form-control" id="kcp_email_3" name="kcp_email_3"
+                                    value="{{ customer.kcp_email_3 | default_if_none:'' }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-md-6">
+                            <label for="bio_kcp_nid">Biometric KCP NID</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="bio_kcp_nid" name="bio_kcp_nid"
+                                    value="{{ customer.kcp_nid | default_if_none:'' }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-md-6">
+                            <label for="bio_kcp_dob">Biometric KCP DOB</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" id="bio_kcp_dob" name="bio_kcp_dob"
+                                    value="{{ customer.kcp_dob|date:'Y-m-d' }}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- <div class="card bg-light mb-5" id="gerp_information">
+                    <div class="card-body">
+                        <h2 class="mb-4">GERP Information</h2>
+                        <hr>
+                        <div class="mb-4">
+                            <label for="requset_name">Requested Task</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="request_name" name="request_name"
+                                    value="{{ workflow_type }}" placeholder="Example: Customer Creation" disabled>
+                                <div class="invalid-feedback" style="width: 100%;">
+                                    This is a required field.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="customer_number">Customer Number</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="customer_number" name="customer_number"
+                                    placeholder="Example: BD000981500" disabled>
+                                <div class="invalid-feedback" style="width: 100%;">
+                                    This is a required field.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="customer_type">Customer Type</label>
+                            <select class="custom-select d-block w-100" id="customer_type" name="customer_type"
+                                disabled>
+                                <option value="" disabled selected>Choose</option>
+                                <option value="Rate Plan 1">Internal</option>
+                                <option value="Rate Plan 2">External</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="vendor_type">Vendor Type</label>
+                            <select class="custom-select d-block w-100" id="vendor_type name=" vendor_type" disabled>
+                                <option value="" disabled selected>Choose</option>
+                                <option value="Rate Plan 1">Domestic</option>
+                                <option value="Rate Plan 2">Foreign</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tax_payer_id">Tax Payer ID</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="tax_payer_id" name="tax_payer_id" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tax_registration_number">Tax Registration Number(VAT)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="tax_registration_number"
+                                    name="tax_registration_number" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Site starts-->
+                <div class="card bg-light mb-5" id="site_details">
+                    <div class="card-body">
+                        <h2 class="mb-4">Site Details</h2>
+                        <hr>
+                        <div class="mb-4">
+                            <p>Customer Address 1</p>
+                            <address>
+                                <!--Delete this if you don't want to show the address again here -->>
+                            </address>
+                        </div>
+                        <div class="mb-4">
+                            <p>Customer Address 2</p>
+                            <address>
+                                <!--Delete this if you don't want to show the address again here --> >
+                            </address>
+                        </div>
+
+                        <div class="mb-4">
+                            <p>Customer Address 3</p>
+                            <address>
+                                <!--Delete this if you don't want to show the address again here --> >
+                            </address>
+                        </div>
+
+                        
+                        <div class="mb-4">
+                            <label for="country">Country</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="country" name="country"
+                                    placeholder="Example: Bangladesh" disabled>
+                                <div class="invalid-feedback" style="width: 100%;">
+                                    This is a required field.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--LERP starts -->
+                <div class="card bg-light mb-5" id="lerp_information">
+                    <div class="card-body">
+                        <h2 class="mb-4">LERP Information</h2>
+
+                        <hr>
+                        <div class="mb-4">
+                            <label for="partner_number">Partner Number</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="partner_number" name="partner_number"
+                                    value="BD{{ customer.bscode }} " disabled>
+                                <div class="invalid-feedback" style="width: 100%;">
+                                    This is a required field.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="partner_type">Partner Type</label>
+                            <select class="custom-select d-block w-100" id="partner_type name=" partner_type" disabled>
+                                <option value="" disabled selected>Choose</option>
+                                <option value="Rate Plan 1">CORP</option>
+                                <option value="Rate Plan 2">NORMAL</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="address">Address</label>
+                            <textarea class="form-control" id="address" rows="3" name="address"
+                                placeholder=" Example:Create for the City Bank and create SCB."
+                                disabled>{{ customer.address1 }}</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="city">City</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="city" name="city"
+                                    placeholder="Example:Dhaka" disabled>
+                                <div class="invalid-feedback" style="width: 100%;">
+                                    This is a required field.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="district">District</label>
+                            <select class="custom-select d-block w-100" value="{{ customer.district }}" id="district"
+                                name="district" disabled>
+                                <option value="" disabled selected>Choose</option>
+                                {% for key, value in customer.DISTRICTS %}
+                                <option value="{{ value }}" {% if customer.district == value %} selected {% endif %}>
+                                    {{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="country">Country</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="country" name="country"
+                                    placeholder="Example: Bangladesh" disabled>
+                                <div class="invalid-feedback" style="width: 100%;">
+                                    This is a required field.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->

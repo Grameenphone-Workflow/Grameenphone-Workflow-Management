@@ -1,0 +1,838 @@
+<html>
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/popper.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link href="{% static '/css/select2.min.css' %}" rel="stylesheet" />
+    <script src="{% static '/js/select2.min.js' %}"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" />
+
+    <title>O2C Form</title>
+    <style>
+        html {
+            font-size: 0.8rem;
+        }
+
+        @include media-breakpoint-up(sm) {
+            html {
+                font-size: 1.2rem;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            html {
+                font-size: 1.4rem;
+            }
+        }
+
+        @include media-breakpoint-up(lg) {
+            html {
+                font-size: 1.6rem;
+            }
+        }
+
+        @font-face {
+            font-family: telenor;
+            src: url("{% static '/fonts/Telenor-Regular.otf' %}");
+        }
+
+        body {
+            font-family: telenor;
+        }
+    </style>
+    <style>
+        body {
+            position: relative;
+        }
+
+        .nav li {
+            float: left;
+        }
+    </style>
+</head>
+
+
+
+<body class="bg-light" data-spy="scroll" data-target="#scrollspy-nav-bar" data-offset="0">
+    <div id="scrollspy-nav-bar" class="mb-4">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <a class="navbar-brand" href="../dashboard/"><img src="{% static '/images/white-telenor.png' %}"
+                    width="25px" class="mr-3">Workflow<sup class="font-weight-light">Lite</sup></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#kam_information">KAM Information</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#company_information">Company Information</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#product_information">Product Information</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#authorized_person_information">Authorized Person
+                            Information</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#bde_information">BDE Information</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#other_information">Others</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#attachments">Attachments</a></li>
+                </ul>
+                <div class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ user.username }} &#9679; {{ user.role }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right text-left" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="../dashboard/">Dashboard</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="../logout/">Logout</a>
+                        </div>
+                    </li>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="py-5 text-center">
+            <h2>O2C Form</h2>
+            <p class="lead">Fill in the information appropriately.</p>
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="col-md-7 order-md-1">
+                <div id="product_requisition_section">
+                    <div class="card bg-light mb-5" id="kam_information">
+                        <div class="card-body">
+                            <h2 class="mb-4">KAM Information</h2>
+                            <hr>
+                            <form action="../product_form/" method="POST" class="needs-validation"
+                                enctype="multipart/form-data" novalidate>
+                                <input type="hidden" name="workflow_id" value="{{ workflow_id }}" />
+                                {% csrf_token %}
+                                <div class="form-row">
+                                    <div class="col-md-7 mb-4">
+                                        <label for="kam_id">KAM ID</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="kam_id" name="kam_id"
+                                                value="{{ kam_user.emp_id }}" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md3 mb-4">
+                                        <label for="kam_name">KAM Name</label>
+                                        <!--kam name should be visible to copc-->
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="kam_name" name="kam_name"
+                                                value="{{ user.username }}" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md3 mb-4">
+                                        <label for="kam_mobile">Mobile No</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="kam_mobile" name="kam_mobile"
+                                                value="{{ kam_user.mobile_number }}" readonly>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md3 mb-4">
+                                        <label for="kam_location">Location</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="kam_location"
+                                                name="kam_location" value="{{ kam_user.location }}" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md3 mb-4">
+                                        <label for="kam_department">Subsegment</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="kam_department"
+                                                name="kam_department" value="{{ kam_user.department }}" readonly>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                        </div>
+                    </div>
+                    <div class="card bg-light mb-5" id="company_information">
+                        <div class="card-body">
+                            <h2 class="mb-4">Company Information</h2>
+                            <hr>
+                            <div class="form-row">
+                                <div class="col-md-4 mb-4">
+                                    <label for="bs_code">BS Code</label>
+                                    <div class="input-group">
+                                        <input onblur="checkBSCode(this.value)" type="text" class="form-control"
+                                            id="bs_code" value="{{ product.bs_code | default_if_none:"" }}"
+                                            name="bs_code" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 mb-4">
+                                    <label for="company_name">Corporate name</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="corporate_name"
+                                            name="corporate_name"
+                                            value="{{ product.corporate_name | default_if_none:"" }}" required readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
+                                    <label for="sub_segment">Sub-Segment</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control"
+                                            value="{{ product.sub_segment | default_if_none:"" }}" id="sub_segment"
+                                            name="sub_segment" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
+                                    <label for="zone">Zone</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control"
+                                            value="{{ product.zone | default_if_none:"" }}" id="zone" name="zone"
+                                            readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
+                                    <label for="region">Region</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control"
+                                            value="{{ product.region | default_if_none:"" }}" id="region" name="region"
+                                            readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-light mb-5" id="product_information">
+                        <div class="card-body">
+                            <h2 class="mb-4">Product Information</h2>
+                            <hr>
+                            <div class="form-row">
+                                <div class="col-md-7 mb-4">
+                                    <label for="product_name">Product Name</label>
+
+                                    <select class="custom-select d-block w-100 select2" id="product_name"
+                                        onchange="GiveERPCode(this.value)"
+                                        value="{{ product.product_name | default_if_none:"" }}">
+                                        <option value="" disabled selected>Choose</option>
+                                    </select>
+                                </div>
+
+
+                                <div class="col-md-3 mb-4">
+                                    <label for="erp_code">ERP/Item Code</label>
+                                    <div class="input-group">
+                                        <input type="text" value="{{ product.erp_code | default_if_none:"" }}"
+                                            class="form-control" id="erp_code" name="erp_code" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-md-4 mb-4">
+                                    <label for="quantity">Quantity</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control"
+                                            value="{{ product.quantity | default_if_none:"" }}" id="quantity"
+                                            name="quantity">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 mb-4">
+                                    <label for="unit_price">Unit Price (BDT)</label>
+                                    <div class="input-group">
+                                        <input type="number" onblur="calculateTotal()" class="form-control"
+                                            id="unit_price" value="{{ product.unit_price | default_if_none:"" }}"
+                                            name="unit_price">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 mb-4">
+                                    <label for="total_price">Total Price (BDT)</label>
+                                    <div class="input-group">
+                                        <input type="text" value="{{ product.total_price | default_if_none:"" }}"
+                                            class="form-control" id="total_price" name="total_price" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-md-6 mb-4">
+                                    <label for="client_contact_person">Client Contact Person</label>
+                                    <div class="input-group">
+                                        <input type="text"
+                                            value="{{ product.client_contact_person | default_if_none:"" }}"
+                                            class="form-control" id="client_contact_person"
+                                            name="client_contact_person">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label for="client_mobile_number">Client Mobile Number</label>
+                                    <div class="input-group">
+                                        <input type="text"
+                                            value="{{ product.client_mobile_number | default_if_none:"" }}"
+                                            class="form-control" id="client_mobile_number" name="client_mobile_number">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-8 mb-4">
+                                    <label for="product_delivery_address">Product Delivery address</label>
+                                    <textarea class="form-control"
+                                        value="{{ product.product_delivery_address | default_if_none:"" }}"
+                                        id="product_delivery_address" rows="3"
+                                        name="product_delivery_address"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-5" id="authorized_person_information">
+                    <div class="card-body">
+                        <h2 class="mb-4">Authorized Person's Information</h2>
+                        <hr>
+                        <div class="mb-4">
+                            <label for="authorized_person_name">Authorized Person Name</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="authorized_person_name"
+                                    value="{{ product.authorized_person_name | default_if_none:"" }}"
+                                    name="authorized_person_name">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="authorized_person_contact_no">Authorized Person's Contact
+                                no</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="authorized_person_contact_no"
+                                    value="{{ product.authorized_person_contact_no | default_if_none:"" }}"
+                                    name="authorized_person_contact_no">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="authorized_person_email">Authorized Person's E-mail</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="authorized_person_email"
+                                    value="{{ product.authorized_person_email | default_if_none:"" }}"
+                                    name="authorized_person_email">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="authorized_person_designation">Authorized Person's
+                                Designation</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="authorized_person_designation"
+                                    value="{{ product.authorized_person_designation | default_if_none:"" }}"
+                                    name="authorized_person_designation">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="authorized_person_nid_number">Authorized Person's NID
+                                number</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="authorized_person_nid_number"
+                                    value="{{ product.authorized_person_nid_number | default_if_none:"" }}"
+                                    name="authorized_person_nid_number">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="remarks">Remarks </label>
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                    value="{{ product.remarks | default_if_none:"" }}" id="remarks" name="remarks">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-5" id="bde_information">
+                    <div class="card-body">
+                        <h2 class="mb-4">BDE Information (For SME and Emerging only)</h2>
+                        <hr>
+
+                        <div class="mb-4">
+                            <label for="bde_name">BDE Name</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                    value="{{ product.bde_pos_code | default_if_none:"" }}" id="bde_name"
+                                    name="bde_name">
+                            </div>
+                        </div>
+
+
+                        <div class="mb-4">
+                            <label for="bde_pos_code">BDE POS Code</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control"
+                                    value="{{ product.bde_pos_code | default_if_none:"" }}" id="bde_pos_code"
+                                    name="bde_pos_code">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card bg-light mb-5" id="other_information">
+                    <div class="card-body">
+                        <h2 class="mb-4">Others</h2>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="btrc_approval_type">BTRC Approval Type</label>
+                                <select class="custom-select d-block w-100" id="btrc_approval_type"
+                                    name="btrc_approval_type">
+                                    <option value="" disabled selected>Choose</option>
+                                    <option value="NEW_SELL">New Sale</option>
+                                    <option value="UP_SALES">Up-Sales</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="sales_credit_option">Sales Credit Option</label>
+                                <select class="custom-select d-block w-100" id="sales_credit_option"
+                                    name="sales_credit_option">
+                                    <option value="" disabled selected>Choose</option>
+                                    <option value="CREDIT_SALES">Credit Sales</option>
+                                    <option value="NON_CREDIT_SALES">Non-Credit Sales</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="btrc_approval_option">BTRC Approval Govt. Account
+                                    Option</label>
+                                <select class="custom-select d-block w-100" id="btrc_approval_option"
+                                    name="btrc_approval_option">
+                                    <option value="" disabled selected>Choose</option>
+                                    <option value="GOVT_ACCOUNT">BTRC approved Govt. Account
+                                    </option>
+                                    <option value="NON_GOVT_ACCOUNT">Non Govt. Account </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="btrc_approval_taken_option">BTRC Approval Already
+                                    Taken?</label>
+                                <select class="custom-select d-block w-100" id="btrc_approval_taken_option"
+                                    name="btrc_approval_taken_option">
+                                    <option value="" disabled selected>Choose</option>
+                                    <option value="YES">Yes</option>
+                                    <option value="NO">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- END OF STEP 1 -->
+                <div class="card bg-light mb-5" id="attachments">
+                    <div class="card-body">
+                        <h2 class="mb-4">Attachments</h2>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="course_image_file">Work Order/Customer Application</label>
+                            <input type="file" class="form-control-file" id="work_order_application"
+                                name="work_order_application">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.work_order_application }}/">View</a>
+                            {{ product.work_order_application }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="btrc_form_20191000">BTRC Form No - 20191000</label>
+                            <input type="file" class="form-control-file" id="btrc_form_20191000"
+                                name="btrc_form_20191000">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.btrc_form_20191000 }}/">View</a>
+                            {{ product.btrc_form_20191000 }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="poc_id">Proof of Company Identity</label>
+                            <input type="file" class="form-control-file" id="poc_id" name="poc_id">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.poc_id }}/">View</a>
+                            {{ product.poc_id }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="btrc_form_20191001">BTRC Form No - 20191001</label>
+                            <input type="file" class="form-control-file" id="btrc_form_20191001"
+                                name="btrc_form_20191001">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.btrc_form_20191001 }}/">View</a>
+                            {{ product.btrc_form_20191001 }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="btrc_form_20191002">BTRC Form No - 20191002</label>
+                            <input type="file" class="form-control-file" id="btrc_form_20191002"
+                                name="btrc_form_20191002">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.btrc_form_20191002 }}/">View</a>
+                            {{ product.btrc_form_20191002 }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nid_kcp">NID Copy of Authorized KCP</label>
+                            <input type="file" class="form-control-file" id="nid_kcp" name="nid_kcp">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.nid_kcp }}/">View</a>
+                            {{ product.nid_kcp }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="poc_billing_address">Proof of Company Billing
+                                Address</label>
+                            <input type="file" class="form-control-file" id="poc_billing_address"
+                                name="poc_billing_address">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.poc_billing_address }}/">View</a>
+                            {{ product.poc_billing_address }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="agreement_copy">Agreement Copy</label>
+                            <input type="file" class="form-control-file" id="agreement_copy" name="agreement_copy">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.agreement_copy }}/">View</a>
+                            {{ product.agreement_copy }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ams_start_up">Approved AMS(START-UP)</label>
+                            <input type="file" class="form-control-file" id="ams_start_up" name="ams_start_up">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.ams_start_up }}/">View</a>
+                            {{ product.ams_start_up }}
+                        </div>
+                        <div class="form-group">
+                            <label for="ams_rate_plan">Approved AMS(RATE PLAN)</label>
+                            <input type="file" class="form-control-file" id="ams_rate_plan" name="ams_rate_plan">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.ams_rate_plan }}/">View</a>
+                            {{ product.ams_rate_plan }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ams_both">Approved AMS(START UP AND RATE PLAN)</label>
+                            <input type="file" class="form-control-file" id="ams_both" name="ams_both">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.ams_both }}/">View</a>
+                            {{ product.ams_both }}
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="other">Other</label>
+                            <input type="file" class="form-control-file" id="other" name="other">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.other }}/">View</a>
+                            {{ product.other }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="previous_btrc_form_20191000">Previous BTRC form
+                                (200191000)</label>
+                            <input type="file" class="form-control-file" id="previous_btrc_form_20191000"
+                                name="previous_btrc_form_20191000">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.previous_btrc_form_20191000 }}/">View</a>
+                            {{ product.previous_btrc_form_20191000 }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="previous_btrc_form_20191003">Previous BTRC
+                                form(200191003)</label>
+                            <input type="file" class="form-control-file" id="previous_btrc_form_20191003"
+                                name="previous_btrc_form_20191003">
+                            <a class="mt-2 btn btn-secondary" target="__blank"
+                                href="../download/{{ product.previous_btrc_form_20191003 }}/">View</a>
+                            {{ product.previous_btrc_form_20191003 }}
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-4">
+                <button id="submit_button" onclick="return checkCorpName();"
+                    class="btn btn-primary btn-lg btn-block col-md-3" type="submit">Save Request</button>
+            </div>
+
+            <!-- <div class="col-sm-4 order-md-1">
+                <h1>Workflow Progress</h1>
+                <table id="lookTab" class="table table-striped" style="font-size: small;">
+                </table>
+            </div> -->
+
+        </div>
+
+        <h1 id="ticket_status" hidden>{{ current_stage }}</h1>
+        <h1 id="workflow_id" hidden>{{ workflow_id }}</h1>
+
+
+
+        <script>
+            var table = document.getElementById("lookTab");
+            // var h2s = ["Customer", "Billing", "Attachments", "KCP", "GERP", "Site Details", "LERP", "VA"];
+            var stages = [
+                "Product Requisition",
+                "Product Approval",
+                "Product Allocation",
+                "POD Generation",
+                "Request for BTRC Approval",
+                "Document Received for BTRC Approval",
+                "Submit to BTRC",
+                "BTRCApproval",
+                "Sales Order",
+                "MR Creation Request",
+                "MR Created",
+                "Product Delivery Request",
+                "Delivery Request Approval",
+                "Product Delivery to GP Representative",
+                "Product Delivery Request to Deliver Agency",
+                "POS Code Assign",
+                "Product Received by Agency/KAM/ZM",
+                "Product Delivered to Customer",
+                "BTRC Form No - 20191003 with User Info",
+                "Biometric and KCP Creation",
+                "Activation",
+                "Document Archiving",
+            ];
+
+            var i;
+            var status = $('#ticket_status').text();
+            for (i = stages.length - 1; i >= 0; i--) {
+                var row = table.insertRow(0);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                //var cell2 = row.insertCell(1);
+                //console.log(h3s[i].innerHTML);
+                cell1.innerHTML = stages[i];
+                if (status.includes(stages[i])) {
+                    cell2.innerHTML = `<label align="center" style="text-align:center; font-size:100%; font-weight:bold; color:green;">&#10004;</label>`;
+                } else {
+                    cell2.innerHTML = `<label align="center" style="text-align:center; font-size:100%; font-weight:bold; color:rgb(248, 12, 12);">&#10060;</label>`;
+                }
+            }
+        </script>
+    </div>
+    </div>
+    </div>
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; Grameenphone Ltd.</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Privacy</a></li>
+            <li class="list-inline-item"><a href="#">Terms</a></li>
+            <li class="list-inline-item"><a href="#">Support</a></li>
+        </ul>
+    </footer>
+    </div>
+    <h1 class="text-center" id="role_of_user" name="{{ user.role }}" hidden>{{ user.role }}</h1>
+
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict';
+
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+        // Use javascript to populate the form.
+        function fireNext(wfid) {
+            var current_stage = $('#ticket_status').text();
+            $.get("../__fire_next_requisition/",
+                {
+                    wfid: wfid,
+                    stage: current_stage
+                },
+                function (data, status) {
+                    console.log("Data: " + data);
+                    ans = data;
+                });
+            window.location.replace("../dashboard")
+        }
+
+        function checkBSCode(bscode) {
+            $.get("../__get_onboard_for_bscode/",
+                {
+                    bscode: bscode,
+                },
+                function (data, status) {
+                    console.log("Data: " + data);
+                    console.log(data[0]);
+                    if (data.length == 1) {
+                        alert("Found an existing BS Code.");
+                        $('#sub_segment').val(data[0].subsegment);
+                        $('#zone').val(data[0].zone);
+                        $('#region').val(data[0].region);
+                        $('#corporate_name').val(data[0].customer);
+                    } else {
+                        alert("Did not find an existing BS Code.");
+                    }
+
+
+                });
+            // window.location.replace("../dashboard")
+        }
+
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $(".dropdown-menu li").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            $.get("../__get_all_items/",
+                function (data, status) {
+                    var select = document.getElementById('product_name');
+
+                    for (var i = 0; i < data.length; i++) {
+                        console.log(data[i]);
+                        select.innerHTML += `<option value="${data[i].code}"" name="${data[i].code}">${data[i].description} </option>`
+                    }
+                });
+
+
+
+            // Hide all sections.
+            $('#product_requisition_section').hide();
+            $('#sim_kit_section').hide();
+            $('#request_for_btrc_approval_section').hide();
+            $('#btrc_approval_checklist').hide();
+            $('#btrc_approved_documents').hide();
+            $('#sales_order_section').hide();
+            $('#mr_upload_section').hide();
+            $('#product_delivery_section').hide();
+
+
+
+
+
+            var current_stage = $('#ticket_status').text();
+            var role = $('#role_of_user').attr('name');
+            // Here's the logic.
+            // I have the role and current_stage.
+            // Using the mapper, stage to role and display.
+
+            // Only keep POD generation for KAM.
+
+            console.log(role + current_stage);
+            if (current_stage.includes("MR Created")) {
+                $('#product_delivery_section').show();
+            } else if (current_stage.includes("MR Creation Request")) {
+                $('#mr_upload_section').show();
+            } else if (current_stage.includes("BTRCApproval")) {
+                $('#sales_order_section').show();
+            } else if (current_stage.includes("Submit to BTRC")) {
+                $('#btrc_approved_documents').show();
+            } else if (current_stage.includes("Request for BTRC Approval")) {
+                $('#btrc_approval_checklist').show();
+            } else if (current_stage.includes("POD Generation")) {
+                $('#request_for_btrc_approval_section').show();
+            } else if (current_stage.includes("Product Requisition")) {
+                // Show KAM everything, but disable everything.
+                // Show COPC everything and enable edits.
+                if (role == "COPC") {
+                    $('#product_requisition_section').show();
+                } else if (role == "KAM") {
+                    $('#product_requisition_section').show();
+                    disableEverythingInTheForm();
+                }
+            } else if (current_stage == "" || current_stage.includes("Drafting")) {
+                $('#product_requisition_section').show();
+            }
+
+        });
+
+        function disableEverythingInTheForm() {
+            console.log("Disabled everything");
+            var inputs = document.getElementsByTagName("input");
+            console.log(typeof (inputs));
+            for (var i = 0; i < inputs.length; i++) {
+                console.log(typeof (inputs[i]));
+                inputs[i].setAttribute("readonly", true);
+            }
+
+            var selects = document.getElementsByTagName("select");
+            console.log(typeof (selects));
+            for (var i = 0; i < selects.length; i++) {
+                console.log(typeof (selects[i]));
+                selects[i].setAttribute("readonly", true);
+            }
+
+            var textareas = document.getElementsByTagName("textarea");
+            console.log(typeof (textareas));
+            for (var i = 0; i < textareas.length; i++) {
+                console.log(typeof (textareas[i]));
+                textareas[i].setAttribute("readonly", true);
+            }
+        }
+
+        function calculateTotal() {
+            var quantity = $('#quantity').val();
+            var unit_price = $('#unit_price').val();
+            if (quantity != "" && unit_price != "") {
+                var total = Number(quantity) * Number(unit_price);
+                console.log(total);
+                $('#total_price').val(total);
+            }
+        }
+
+        function GiveERPCode(code) {
+            $('#erp_code').val(code);
+        }
+
+        function checkCorpName() {
+            var corp;
+            corp = $('#corporate_name').val();
+            if (corp == "") {
+                alert("Enter a valid BS Code");
+                return false;
+            };
+        }
+
+    </script>
+    <script>
+        $('.select2').select2();
+    </script>
+
+</body>
+
+</html>

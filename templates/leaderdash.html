@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/popper.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/font-awesome.min.css' %}">
+
+
+    <link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}">
+    <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/responsive.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.responsive.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/buttons.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static '/css/searchPanes.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.searchPanes.min.js' %}"></script>
+
+    <script src="{% static '/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static '/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static '/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static '/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static '/js/jszip.min.js' %}"></script>
+    <script src="{% static '/js/vfs_fonts.js' %}"></script>
+    <script src="{% static '/js/a076d05399.js' %}"></script>
+    <script src="{% static '/js/utils.js' %}"></script>
+
+
+    <script src="{% static '/js/Chart.min.js' %}"></script>
+
+
+    <link rel="stylesheet" href="{% static '/css/free.min.css' %}">
+
+    <style>
+        html {
+            font-size: 0.8rem;
+        }
+
+        @include media-breakpoint-up(sm) {
+            html {
+                font-size: 1.2rem;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            html {
+                font-size: 1.4rem;
+            }
+        }
+
+        @include media-breakpoint-up(lg) {
+            html {
+                font-size: 1.6rem;
+            }
+        }
+        @font-face {
+            font-family: telenor;
+            src: url("{% static '/fonts/Telenor-Regular.otf' %}");
+        }
+
+        body {
+            font-family: telenor;
+        }
+    </style>
+
+
+
+    <title>Dashboard</title>
+</head>
+
+<!-- 
+    TODO:
+    Add logout button/profile dropdown with change password/logout.
+    Navigation bar.
+    The navigation bar should be on the side bar.
+    Make this whole page prettier following the same scheme as the login page.
+
+    TODO:
+    Fix the visualization of the table. See if better formatting, text alignment etc is available.
+    That is, make it look more professional.
+    Do not delete any existing code.
+
+    TODO:
+    If needed add animations so that the rows don't disappear immediately.
+    Makes it less jarring when it happens.
+-->
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <a class="navbar-brand" href="#">Workflow<sup class="font-weight-light">Lite</sup></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="../onboarding_sla_view/">Onboarding SLA</a>
+                <a class="nav-item nav-link" href="../visit/visiting_home/">Visiting</a>
+                <!-- <a class="nav-item nav-link" href="#">Product Requisition</a> -->
+            </div>
+
+            <div class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.username }} &#9679; {{ user.role }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right text-left" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="../logout/">Logout</a>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <br>
+        <label class="role">{{ role }}</label>
+
+        <h2 class="mb-4">SLA</h2>
+        <canvas class="p-5 mt-3 mb-3" id="myChart" width="250" height="250"></canvas>
+
+
+        <div class="card bg-light mb-5" id="">
+            <div class="card-body">
+                <h2 class="mb-4">SLA Table</h2>
+                <table id="leader_table" class="table table-striped table-bordered text-center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>WFID</th>
+                            <th>Task</th>
+                            <th>Fire Time</th>
+                            <th>Completion Time</th>
+                            <th>Expected</th>
+                            <th>Actual</th>
+                            <th>Status</th>
+                            <th>User</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div>
+            
+        </div>
+    </div>
+
+</body>
+<label id="username">{{ user.username }}</label>
+
+</html>
+<script>
+    var randomScalingFactor = function () {
+        return Math.round(Math.random() * 100);
+    };
+
+    var stats;
+    $.get("../__get_all_sla/",
+        function (data, status) {
+            console.log("Data: " + data);
+            stats = data;
+            console.log(data.data);
+            var tickets = data.data;
+            var pass_count = 0;
+            var fail_count = 0;
+            for (var i = 0; i < tickets.length; i++) {
+                if (tickets[i].Status)
+                    pass_count += 1;
+                else
+                    fail_count += 1;
+            }
+            console.log(fail_count, pass_count);
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: [
+                            fail_count,
+                            pass_count,
+                        ],
+                        backgroundColor: [
+                            window.chartColors.red,
+                            window.chartColors.green,
+                        ],
+                        label: 'SLA'
+                    }],
+                    labels: [
+                        'SLA Failed',
+                        'SLA Achieved',
+                    ]
+                },
+                options: {
+                    responsive: false
+                }
+            });
+        });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        // $('.role').hide();
+        var table = $('#leader_table').DataTable({
+            "ajax": "../__get_all_sla/",
+            "columns": [
+                { "data": "WFID" },
+                { "data": "Task" },
+                { "data": "Fire Time" },
+                { "data": "Completion Time" },
+                { "data": "Expected" },
+                { "data": "Actual" },
+                { "data": "Status" },
+                { "data": "User" },
+            ],
+            dom: 'Bfrtip',
+            "buttons": [
+                'copy', 'csv', 'excel',
+            ],
+            pageLength: 10,
+            filter: true,
+            scrollCollapse: true,
+            scroller: true,
+            responsive: true
+        });
+    });
+
+</script>

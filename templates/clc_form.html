@@ -1,0 +1,287 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <title>O2C Form</title>
+    <style>
+        body {
+            position: relative;
+        }
+
+        .nav li {
+            float: left;
+        }
+    </style>
+</head>
+
+
+
+<body class="bg-light" data-spy="scroll" data-target="#scrollspy-nav-bar" data-offset="0">
+    <div id="scrollspy-nav-bar" class="mb-4">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <a class="navbar-brand" href="#">Workflow<sup class="font-weight-light">Lite</sup></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="py-5 text-center">
+            <div class="h1">
+                <i class="fas fa-book fa-lg"></i>
+            </div>
+            <h2>CLC Form</h2>
+            <p class="lead">Fill in the information appropriately.</p>
+        </div>
+        <div class="justify-content-center">
+            <div class="">
+                <div id="sim_kit_information">
+                    <div class="card bg-light mb-4 text-center" id="kam_information">
+                        <div class="card-body">
+                            <h2 class="mb-4">SIM Kit Information</h2>
+                            <hr>
+                            <div class="row text-center center-block">
+                                <div class="col-sm mb-4">
+                                    <label for="kam_id">First Kit Serial Number</label>
+                                </div>
+
+                                <div class="col-xs mb-4">
+                                    <label for="kam_name">Last Kit Serial Number</label>
+                                </div>
+
+                                <div class="col-sm mb-4">
+                                    <label for="kam_name">Total Quantity of that Serial</label>
+                                </div>
+
+                                <div class="col-sm mb-4">
+                                    <label for="kam_name"></label>
+                                </div>
+                            </div>
+                            <div id="inputs_div">
+                                <!-- Generate Stuff Here -->
+                            </div>
+                            <button class="btn btn-secondary" onclick="addNewRow()">Add Row</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- <button onclick="return confirm('Are you sure?');" class="btn btn-primary btn-lg btn-block col-md-4"
+                type="submit">Save Draft</button> -->
+            <div>
+                <button type="submit" class="btn btn-success btn-lg btn-block col-md-4" data-toggle="modal"
+                    data-target="#submit_modal">Submit</button>
+
+                <button type="button" class="btn btn-danger btn-lg btn-block col-md-4" data-toggle="modal"
+                    data-target="#reject_modal">Reject</button>
+            </div>
+        </div>
+
+        <!-- Submit Modal -->
+        <div class="modal fade" id="submit_modal" tabindex="-1" role="dialog" aria-labelledby="submit_modal_label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="submit_modal_label">Are you sure you want to submit?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea placeholder="Add an optional remark" id="submit_remark" class="form-control"
+                            style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button onclick="fireNext(this.id)" id="{{ workflow_id }}" type="submit"
+                            class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reject Modal -->
+        <div class="modal fade" id="reject_modal" tabindex="-1" role="dialog" aria-labelledby="reject_modal_label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reject_modal_label">Are you sure you want to reject?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form onsubmit="return rejectPrev(this.id);" action="../dashboard" class="needs-validation"
+                        id="{{ workflow_id }}">
+                        <div class="modal-body">
+                            <textarea placeholder="Add a mandatory remark" id="rejection_remark" class="form-control"
+                                style="min-width: 100%;" required></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <h1 id="ticket_status">{{ current_stage }}</h1>
+    <hidden id="number">1</hidden>
+
+
+    <hr class="mb-4">
+    </div>
+    </div>
+    </div>
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; Grameenphone Ltd.</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Privacy</a></li>
+            <li class="list-inline-item"><a href="#">Terms</a></li>
+            <li class="list-inline-item"><a href="#">Support</a></li>
+        </ul>
+    </footer>
+    </div>
+    <h1 class="text-center" id="role_of_user" name="{{ user.role }}">{{ user.role }}</h1>
+
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict';
+
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+        // Use javascript to populate the form.
+        function fireNext(wfid) {
+            var current_stage = $('#ticket_status').text();
+            var startSerials = "";
+            var lastSerials = "";
+            var quantities = "";
+            var inputs = document.getElementById("inputs_div");
+            console.log(inputs.childElementCount);
+            for (var i = 0; i < inputs.childElementCount; i++) {
+                console.log(inputs.children[i]);
+                var counter = inputs.children[i].id.slice(-1);
+                console.log(counter);
+                startSerials += document.getElementById("start_" + counter).value + ";";
+                lastSerials += document.getElementById("last_" + counter).value + ";";
+                quantities += document.getElementById("quantity_" + counter).value + ";";
+            }
+
+            $.get("../__submit_sim_serials/",
+                {
+                    wfid: wfid,
+                    starts: startSerials,
+                    lasts: lastSerials,
+                    quantitie: quantities,
+                },
+                function (data, status) {
+                    console.log("Data: " + data);
+                    ans = data;
+                });
+            window.location.replace("../dashboard")
+        }
+
+        function addNewRow() {
+
+            var div = document.getElementById("inputs_div");
+            var hidden = document.getElementById("number");
+            var number = hidden.innerHTML;
+            if (number > 8) {
+                return;
+            }
+            hidden.innerHTML = Number(number) + 1;
+            console.log(number);
+
+            div.innerHTML += `
+            <div id="div_${ number}" class="row text-center center-block" >
+                <div class="col-sm mb-4">
+                    <div id="start_div" class="input-group">
+                        <input type="text" class="form-control" id="start_${ number}" name="kam_id">
+                    </div>
+                </div>
+
+                <div class="col-sm mb-4">
+                    <div id="last_div" class="input-group">
+                        <input type="text" onblur="calculateQuantity(this.id)" class="form-control" id="last_${ number}" name="kam_name">
+                    </div>
+                </div>
+
+                <div class="col-sm mb-4">
+                    <div id="quantity_div" class="input-group">
+                        <input type="text" class="form-control" id="quantity_${ number}" name="kam_mobile">
+                    </div>
+                </div>
+
+                <div class="col-sm mb-4">
+                    <button id="${ number}"onclick="removeRow(this.id)" class="btn btn-danger">&times</button>
+                </div>
+            </div>
+            `
+        }
+
+        function removeRow(id) {
+            var div = document.getElementById("div_" + id);
+            var parent = document.getElementById("inputs_div");
+            parent.removeChild(div);
+        }
+
+        function calculateQuantity(number) {
+            console.log(number.slice(-1));
+            number = number.slice(-1);
+            var quantityField = document.getElementById("quantity_" + number);
+            if (quantityField.innerHTML == "") {
+                var start = Number(document.getElementById("start_" + number).innerHTML);
+                var last = Number(document.getElementById("last_" + number).innerHTML);
+                quantityField.innerHTML = start - last + 1;
+            }
+        }
+
+        function submitSimSerials() {
+            var startSerials = "";
+            var lastSerials = "";
+            var quantities = "";
+            var inputs = document.getElementById("inputs_div");
+            console.log(inputs.childElementCount);
+            for (var i = 0; i < inputs.childElementCount; i++) {
+                console.log(inputs.children[i]);
+                var counter = inputs.children[i].id.slice(-1);
+                console.log(counter);
+                startSerials += document.getElementById("start_" + counter).value + ";";
+                lastSerials += document.getElementById("last_" + counter).value + ";";
+                quantities += document.getElementById("quantity_" + counter).value + ";";
+            }
+            console.log("Starts: " + startSerials);
+            console.log("Last: " + lastSerials);
+            console.log("Quantities: " + quantities);
+        }
+    </script>
+</body>
+
+</html>
