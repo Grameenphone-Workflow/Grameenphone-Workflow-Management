@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/popper.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/font-awesome.min.css' %}">
+
+
+    <link href="{% static '/css/select2.min.css' %}" rel="stylesheet" />
+    <script src="{% static '/js/select2.min.js' %}"></script>
+
+
+    <link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}">
+    <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/responsive.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.responsive.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/buttons.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static '/css/searchPanes.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.searchPanes.min.js' %}"></script>
+
+    <script src="{% static '/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static '/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static '/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static '/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static '/js/jszip.min.js' %}"></script>
+    <script src="{% static '/js/vfs_fonts.js' %}"></script>
+    <script src="{% static '/js/a076d05399.js' %}"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" />
+
+    <link rel="stylesheet" href="{% static '/css/free.min.css' %}">
+
+
+    <link rel="stylesheet" type="text/css" href="{% static '/css/tui-calendar.css' %}" />
+
+    <!-- If you use the default popups, use this. -->
+    <link rel="stylesheet" type="text/css" href="{% static '/css/tui-date-picker.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static '/css/tui-time-picker.css' %}" />
+
+
+    <script src="{% static '/js/tui-code-snippet.js' %}"></script>
+    <script src="{% static '/js/tui-dom.js' %}"></script>
+    <script src="{% static '/js/tui-time-picker.min.js' %}"></script>
+    <script src="{% static '/js/tui-date-picker.min.js' %}"></script>
+    <script src="{% static '/js/tui-calendar.js' %}"></script>
+
+    <style>
+        html {
+            font-size: 0.8rem;
+        }
+
+        @include media-breakpoint-up(sm) {
+            html {
+                font-size: 1.2rem;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            html {
+                font-size: 1.4rem;
+            }
+        }
+
+        @include media-breakpoint-up(lg) {
+            html {
+                font-size: 1.6rem;
+            }
+        }
+
+        @font-face {
+            font-family: telenor;
+            src: url("{% static '/fonts/Telenor-Regular.otf' %}");
+        }
+
+        body {
+            font-family: telenor;
+        }
+    </style>
+
+
+
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <a class="navbar-brand" href="../dashboard/"><img src="{% static '/images/white-telenor.png' %}" width="25px"
+                class="mr-3">Workflow<sup class="font-weight-light">Lite</sup></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                <!-- <a class="nav-item nav-link" href="#">Onboarding</a>
+                <a class="nav-item nav-link" href="#">Product Requisition</a> -->
+                <a class="nav-item nav-link active" href="{% url 'visiting_home' %}">Visiting<span
+                        class="sr-only">(current)</span></a>
+            </div>
+
+            <div class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.username }} &#9679; {{ user.role }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right text-left" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Something</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="../../logout/">Logout</a>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <label class="role">{{ role }}</label>
+        <h2 class="mb-4 mt-4">Visiting</h2>
+        <div id="leader_options" hidden>
+            <a id="download_excel_btn" href="../download_full_excel/" class="btn btn-info ml-3 mb-3" href="#"
+                target="__blank">Download Visting Excel</a>
+            <br>
+            <label>Select a KAM ID: </label>
+            <select class="form-control select2 col-md-5" id="kam_ids" onchange="changeSelectedKAM(this.value)">
+                <!-- Insert KAM IDs for selection here. -->
+            </select>
+
+        </div>
+        <div id="today_section" class="border p-4 mb-3 mt-3">
+            <label for="">Pending Visits</label>
+            <hr>
+            <div id="upcoming_visits" class="p-3">
+                <!-- Generate upcoming visits here -->
+            </div>
+
+
+            <label class="mt-4" for="">Upcoming Visits</label>
+            <hr>
+            <div id="pending_visits" class="p-3">
+                <!-- Generate pending visits here -->
+            </div>
+        </div>
+
+        <div clas="row">
+            <h2 class="mb-4 mt-4">Your Calendar</h2>
+            <button id="create_new_vis_btn" class="btn btn-success" data-toggle="modal"
+                data-target="#submit_modal">Create New Visit</button>
+        </div>
+        <div id="today_section" class="border p-4 mb-3 mt-3">
+            <div class="float-right row">
+                <h4 class="ml-2 mr-2"><span class="p-2 badge badge-success">Complete</span></h4>
+                <h4 class="ml-2 mr-2"><span class="p-2 badge badge-danger">Incomplete</span></h4>
+                <h4 class="ml-2 mr-2"><span class="p-2 badge"
+                        style="color: white; background-color: blueviolet;">Manager Assigned</span></h4>
+            </div>
+            <div class="row">
+                <button class="btn btn-info p-2 m-2" onclick="moveToNextOrPrevRange(-1)">Prev</button>
+                <h1 id="current_month_year">MONTH - YEAR</h1>
+                <button class="btn btn-info p-2 m-2" onclick="moveToNextOrPrevRange(1)">Next</button>
+            </div>
+            <div id="calendar"></div>
+        </div>
+        <div id="summary_section" class="border p-4 mb-3 mt-3">
+            <h2>Summary</h2>
+            <hr>
+            <div id="company_list">
+
+            </div>
+            <hr>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="submit_modal" tabindex="-1" role="dialog" aria-labelledby="submit_modal_label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submit_modal_label">Create A New Visit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="">Select the date of visit.</label>
+                    <input id="date" class="form-control mb-3" type="date">
+                    <!-- <input id="end_date" class="form-control mb-3" type="datetime-local"> -->
+                    <select class="custom-select d-block w-100 mb-3" id="visit_type" name="visit_type">
+                        <{% for value in purposes %} <option value="{{ value.purpose }}">{{ value.purpose }}</option>
+                            {% endfor %}
+                    </select>
+                    <input class="form-control" type="text" name="" id="company_name_textbox"
+                        placeholder="Enter potential customer name">
+                    <div id="company_name_div">
+                        <select class="custom-select d-block w-100 select2 mb-3" id="company_name">
+                            <option value="default" disabled selected>Choose A Company</option>
+                        </select>
+                    </div>
+                    <br>
+                    <button class="btn btn-info" onclick="toggleCompany()">Toggle</button>
+                    <textarea class="form-control mt-3 mb-3" name="visit_remark" id="visit_remark" cols="30" rows="4"
+                        placeholder="Enter an optional comment"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button onclick="createVisit()" name="Default" id="submit_new_visit_button" type="submit"
+                        class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="complete_visit_modal" tabindex="-1" role="dialog"
+        aria-labelledby="complete_visit_modal_label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="complete_visit_modal_label">Complete Visit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{% url 'complete_visit' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3 p-3 form-group">
+                        <label for="visit_image_upload">Upload an image of your visit</label>
+                        <input type="file" class="form-control-file" id="visit_image" name="visit_image">
+                        <br>
+                        <input class="ml-3 p-1" value="Successful" type="radio" name="visit_success" id="">Successful
+                        <input class="ml-3 p-1" value="Failed" type="radio" name="visit_success" id="">Failed
+                        <input class="ml-3 p-1" value="Needs Follow-up" type="radio" name="visit_success" id="">Needs
+                        Follow-up
+
+                    </div>
+
+                    <div class="modal-body">
+                        <textarea class="form-control mb-3" name="visit_complete_remark" id="visit_complete_remark"
+                            cols="30" rows="4" placeholder="Enter an optional comment"></textarea>
+                    </div>
+                    <input type="hidden" name="visit_id" id="selected_visit_id">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button name="" id="" type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modify_visit_modal" tabindex="-1" role="dialog"
+        aria-labelledby="modify_visit_modal_label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modify_visit_modal_label">Modify Visit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <label for="">Change Visit Date:</label>
+                    <input id="modified_date" class="form-control mb-3" type="date">
+                    <!-- <input id="end_date" class="form-control mb-3" type="datetime-local"> -->
+                    <h5>Change Visit Purpose:</h5>
+                    <select class="custom-select d-block w-100 mb-3" id="modified_visit_type" name="visit_type">
+                        <{% for value in purposes %} <option value="{{ value.purpose }}">{{ value.purpose }}</option>
+                            {% endfor %}
+                    </select>
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button onclick="modifyVisit(this.name)" name="Default" id="modify_visit_submit_button"
+                        type="submit" class="btn btn-success">Submit Changes</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+</body>
+
+<label id="username" hidden>{{ user.username }}</label>
+<label id="role" hidden>{{ user.role }}</label>
+
+</html>
+
+<script>
+
+    $(document).ready(function () {
+        $('.role').hide();
+        document.getElementById('date').valueAsDate = new Date();
+    });
+
+
+
+    var calendar = new tui.Calendar(document.getElementById('calendar'), {
+        defaultView: 'month',
+        taskView: false,    // Can be also ['milestone', 'task']
+        scheduleView: ['time'],  // Can be also ['allday', 'time']
+        useDetailPopup: true,
+        useCreationPopup: false,
+        disableClick: true,
+        disableDblClick: true,
+        template: {
+            time: function (schedule) {
+                // // console.log(schedule);
+                // The isAllDay check is used to see if the task has been assigned by the manager.
+                // alert(schedule.isAllDay);
+                // // console.log("Whahaha");
+                // // console.log(schedule.isPending);
+
+                if (schedule.isPending) {
+                    return `<p class="text-success">${schedule.title}</p>`;
+                } else {
+                    if (schedule.color == "purple") {
+                        return `<p style="color: #BA55D3">${schedule.title}</p>`;
+                    } else if (schedule.color == "red") {
+                        return `<p class="text-danger">${schedule.title}</p>`;
+                    }
+                }
+            },
+        },
+        month: {
+            daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            startDayOfWeek: 0,
+            narrowWeekend: false
+        },
+        week: {
+            daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            startDayOfWeek: 0,
+            narrowWeekend: false
+        }
+    });
+
+    calendar.on({
+        'clickSchedule': function (e) {
+            // // console.log('clickSchedule', e);
+        },
+    });
+
+    var schedule;
+
+    $(document).ready(function () {
+
+        $('#company_name_textbox').hide();
+
+        if ($('#role').text() == "Leader") {
+            // // console.log("This user is a leader.");
+            $('#today_section').hide();
+            $('#submit_new_visit_button').attr('onclick', 'createManagerVisit()');
+            $('#create_new_vis_btn').hide();
+            generateLeaderOptions();
+        } else if ($('#role').text() == "Manager") {
+            // // console.log("This user is a manager.");
+            $('#today_section').hide();
+            $('#submit_new_visit_button').attr('onclick', 'createManagerVisit()');
+            $('#create_new_vis_btn').hide();
+            generateManagerOptions();
+        }
+
+        document.getElementById('current_month_year').innerHTML = new Date().toLocaleString('default', { month: 'long' }) + ' - ' + new Date().getFullYear();
+
+        // Add logic to only check for onboarded customers.
+        // If made in laravel, this check is not required.
+        $.get("../__get_companies_for_kam",
+            {
+                kam_id: $('#username').text()
+            },
+            function (data, status) {
+                // // console.log("This is what I found: " + typeof (data));
+                for (var key in data) {
+                    var value = data[key];
+                    // // console.log(value);
+                }
+                // // console.log(status);
+            });
+
+        $.get("../__get_visits_for_kam",
+            {
+                kam_id: $('#username').text()
+            },
+            function (data, status) {
+                // // console.log("This is what I found: " + typeof (data));
+                // // console.log(data);
+
+                // I moved this to, so that only the current month is shown in the calendar.
+                // addScedulesToCalendar(data);
+
+                createAgenda(data);
+                // // console.log(status);
+            });
+
+        $.get("../__populate_calendar",
+            {
+                kam_id: $('#username').text()
+            },
+            function (data, status) {
+                // // console.log("This is what I found: " + typeof (data));
+                // // console.log(data);
+
+                // I moved this to, so that only the current month is shown in the calendar.
+                addScedulesToCalendar(data);
+
+                // createAgenda(data);
+                // // console.log(status);
+            });
+
+        $.get("../__get_companies_for_kam",
+            {
+                kam_id: $('#username').text()
+            },
+            function (data, status) {
+                // // console.log("This is what I found: " + typeof (data));
+                // // console.log(data);
+                generateOnboardingSelections(data);
+                // // console.log(status);
+            });
+
+        $.get("../__get_current_month_visits",
+            {
+                kam_id: $('#username').text()
+            },
+            function (data, status) {
+                // // console.log("Current Month: " + data);
+                for (var i = 0; i < data.length; i++) {
+                    // // console.log(data[i]);
+                    // #####################
+                    var expected_visits = 10;
+                    // #####################
+
+
+                    var progressMarkup = `
+                        <div class="mt-3 mb-3">
+                            <h4>${data[i].company_name}</h4>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: ${data[i].completed_visit_count / expected_visits * 100}%" aria-valuenow="${data[i].completed_visit_count}" aria-valuemin="0"
+                                    aria-valuemax="${expected_visits}" data-toggle="tooltip" title="${data[i].completed_visit_count} completed"></div>
+                                <div class="progress-bar bg-info" role="progressbar" style="width: ${data[i].planned_visit_count / expected_visits * 100}%" aria-valuenow="${data[i].planned_visit_count}" aria-valuemin="0"
+                                    aria-valuemax="${expected_visits}" data-toggle="tooltip" title="${data[i].planned_visit_count} planned"></div>
+                            </div>
+                            <h5>${data[i].completed_visit_count}/${expected_visits} visits.</h3>
+                        </div>
+                    `;
+                    document.getElementById('company_list').innerHTML += progressMarkup;
+                }
+
+            });
+        $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+    });
+
+    function generateOnboardingSelections(data) {
+        // // console.log("Inside Function: " + data)
+        var selection = document.getElementById('company_name');
+        for (var i = 0; i < data.length; i++) {
+            // // console.log(data[i].company_name);
+            selection.innerHTML += `<option value="${data[i].company_name}">${data[i].company_name}</option>`;
+        }
+    }
+
+    function addScedulesToCalendar(data) {
+        calendar.createSchedules(data);
+    }
+
+    function moveToNextOrPrevRange(val) {
+        if (val === -1) {
+            calendar.prev();
+        } else if (val === 1) {
+            calendar.next();
+        }
+    }
+
+    function moveToNextOrPrevRange(val) {
+        if (val === -1) {
+            calendar.prev();
+        } else if (val === 1) {
+            calendar.next();
+        }
+    }
+
+    function createVisit() {
+        let company_name = $('#company_name').val();
+        if ($('#company_name_textbox').val() != "") {
+            // // console.log("Potential company has been given.");
+            company_name = $('#company_name_textbox').val();
+
+        }
+        if (company_name == null) {
+            alert("Please enter a valid company name.");
+            return;
+        }
+        $.get("../__create_new_visit",
+            {
+                kam_id: $('#username').text(),
+                corporate_name: company_name,
+                date: $('#date').val(),
+                // end_date: $('#end_date').val(),
+                visit_remark: $('#visit_remark').val(),
+                visit_type: $('#visit_type').val()
+            },
+            function (data, status) {
+                // // console.log(status);
+                location.reload();
+            });
+    }
+
+    function modifyVisit(id) {
+        $.get("../__modify_visit",
+            {
+                date: $('#modified_date').val(),
+                visit_type: $('#modified_visit_type').val(),
+                visit_id: document.getElementById('selected_visit_id').getAttribute("value"),
+            },
+            function (data, status) {
+                // // // console.log(status);
+                location.reload();
+            });
+    }
+
+    function createManagerVisit() {
+        let company_name = $('#company_name').val();
+        if ($('#company_name_textbox').val() != "") {
+            // // console.log("Potential company has been given.");
+            company_name = $('#company_name_textbox').val();
+
+        }
+        $.get("../__create_manager_visit",
+            {
+                kam_id: $('#username').text(),
+                corporate_name: company_name,
+                date: $('#date').val(),
+                // end_date: $('#end_date').val(),
+                visit_remark: $('#visit_remark').val(),
+                visit_type: $('#visit_type').val(),
+                manager: true,
+            },
+            function (data, status) {
+                // // console.log(status);
+                location.reload();
+            });
+    }
+
+    function createAgenda(data) {
+        // // console.log("In Agenda: " + data);
+        // if (data.length > 0) {
+        //     document.getElementById('todays_agenda').innerHTML = "";
+        // }
+        for (var i = 0; i < data.length; i++) {
+            // // console.log(data[i]);
+            var date = new Date(data[i].start);
+            // // // console.log(date.toLocaleDateString());
+
+            var markup =
+                `
+            <div class=" mt-2 mb-2 rounded-sm p-4 border" style="border-style: dashed;">
+                <div class="row">
+                    <h3 class="col-md-7">${data[i].title} - ${new Date(data[i].start).toDateString()}</h3>
+                    
+                    <div class="ml-auto mr-auto">
+                        <button id=${data[i].visiting_id} class="btn btn-success mb-3" onclick="setSelectedVisit(this.id)" data-toggle="modal" data-target="#complete_visit_modal">Complete</button>
+                    </div>
+                    `;
+
+            // // // console.log(new Date(data[i].start));
+            // // // console.log(new Date(new Date().setDate(new Date().getDate() - 1)));
+            if (new Date(data[i].start) >= new Date(new Date().setDate(new Date().getDate() - 2))) {
+                markup += `
+                        <div class="ml-auto mr-auto">
+                            <button id=${data[i].visiting_id} class="btn btn-warning mb-3" onclick="setSelectedVisit(this.id)" data-toggle="modal" data-target="#modify_visit_modal">Modify</button>
+                        </div>
+                        `;
+            }
+
+            markup += `
+                    <div class="ml-auto mr-auto">
+                        <button id=${data[i].visiting_id} class="btn btn-danger mb-3" onclick="deleteVisit(this.id)">Delete</button>
+                    </div>
+                </div>
+                <h5>${data[i].purpose}</h5>
+                <em>${data[i].remarks}</em>
+            </div>
+            `;
+
+            if (new Date(data[i].start) > new Date()) {
+                document.getElementById('pending_visits').innerHTML += markup;
+            } else {
+                document.getElementById('upcoming_visits').innerHTML += markup;
+            }
+        }
+
+        if (document.getElementById('pending_visits').innerHTML == "")
+            document.getElementById('pending_visits').innerHTML += "No pending visits.";
+
+        if (document.getElementById('upcoming_visits').innerHTML == "")
+            document.getElementById('upcoming_visits').innerHTML += "No upcoming visits.";
+    }
+
+    function deleteVisit(id) {
+        if (confirm("Delete this visit?")) {
+            $.get("../__delete_visit",
+                {
+                    visit_id: id,
+                },
+                function (data, status) {
+                    // // console.log(status);
+                    location.reload();
+                });
+        }
+    }
+
+    function setSelectedVisit(id) {
+        $('#selected_visit_id').val(id);
+    }
+
+    function generateLeaderOptions() {
+        $.get("../__get_kamids_leader",
+            {
+                leader: $('#username').text(),
+            },
+            function (data, status) {
+                var kamSelection = document.getElementById('kam_ids');
+                kamSelection.innerHTML += `<option selected disabled>Choose a KAM</option>`
+                for (var i = 0; i < data.length; i++) {
+                    kamSelection.innerHTML += `<option value="${data[i].kam_id}">${data[i].kam_id}</option>`;
+                }
+            });
+        $('#leader_options').prop('hidden', false);
+    }
+
+    function generateManagerOptions() {
+        $.get("../__get_kamids_manager",
+            {
+                manager: $('#username').text(),
+            },
+            function (data, status) {
+                var kamSelection = document.getElementById('kam_ids');
+                kamSelection.innerHTML += `<option selected disabled>Choose a KAM</option>`
+                for (var i = 0; i < data.length; i++) {
+                    kamSelection.innerHTML += `<option value="${data[i].kam_id}">${data[i].kam_id}</option>`;
+                }
+            });
+        $('#leader_options').prop('hidden', false);
+    }
+
+    function changeSelectedKAM(kam_id) {
+        calendar.clear();
+        $('#username').text(kam_id);
+        // // console.log($('#username').text());
+        // // console.log(kam_id);
+        $('#create_new_vis_btn').show();
+
+        $.get("../__get_visits_for_kam",
+            {
+                kam_id: kam_id
+            },
+            function (data, status) {
+                // // console.log("This is what I found: " + typeof (data));
+                // // console.log(data);
+
+                // I moved this to, so that only the current month is shown in the calendar.
+                // addScedulesToCalendar(data);
+
+                createAgenda(data);
+                // // console.log(status);
+            });
+
+        $.get("../__populate_calendar",
+            {
+                kam_id: kam_id
+            },
+            function (data, status) {
+                // // console.log("This is what I found: " + typeof (data));
+                // // console.log(data);
+
+                // I moved this to, so that only the current month is shown in the calendar.
+                addScedulesToCalendar(data);
+
+                // createAgenda(data);
+                // // console.log(status);
+            });
+
+        $.get("../__get_current_month_visits",
+            {
+                kam_id: kam_id
+            },
+            function (data, status) {
+                // // console.log("Current Month: " + data);
+                document.getElementById('company_list').innerHTML = "";
+                for (var i = 0; i < data.length; i++) {
+                    // // console.log(data[i]);
+                    // #####################
+                    var expected_visits = 10;
+                    // #####################
+
+
+                    var progressMarkup = `
+                        <div class="mt-3 mb-3">
+                            <h4>${data[i].company_name}</h4>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: ${data[i].completed_visit_count / expected_visits * 100}%" aria-valuenow="${data[i].completed_visit_count}" aria-valuemin="0"
+                                    aria-valuemax="${expected_visits}" data-toggle="tooltip" title="${data[i].completed_visit_count} completed"></div>
+                                <div class="progress-bar bg-info" role="progressbar" style="width: ${data[i].planned_visit_count / expected_visits * 100}%" aria-valuenow="${data[i].planned_visit_count}" aria-valuemin="0"
+                                    aria-valuemax="${expected_visits}" data-toggle="tooltip" title="${data[i].planned_visit_count} planned"></div>
+                            </div>
+                            <h5>${data[i].completed_visit_count}/${expected_visits} visits.</h3>
+                        </div>
+                    `;
+                    document.getElementById('company_list').innerHTML += progressMarkup;
+                }
+            }
+        );
+    }
+
+    function generatDownloadLink() {
+        $('#download_excel_btn').attr('href', '../download_excel/' + $('#username').text());
+        // // console.log($('#download_excel_btn').attr('href'));
+    }
+
+    function toggleCompany() {
+        $("#company_name").val('default').trigger('change');
+        $('#company_name_textbox').val("");
+
+        if ($('#company_name_div').is(':visible')) {
+            // // console.log("Showing select");
+            $('#company_name_div').hide();
+            $('#company_name_textbox').show();
+        } else {
+            // // console.log("Hiding select");
+            $('#company_name_div').show();
+            $('#company_name_textbox').hide();
+        }
+
+    }
+
+    function moveToNextOrPrevRange(val) {
+        if (val === -1) {
+            calendar.prev();
+            document.getElementById('current_month_year').innerHTML = calendar.getDate().toDate().toLocaleString('default', { month: 'long' }) + ' - ' + new Date().getFullYear();
+        } else if (val === 1) {
+            calendar.next();
+            document.getElementById('current_month_year').innerHTML = calendar.getDate().toDate().toLocaleString('default', { month: 'long' }) + ' - ' + new Date().getFullYear();
+        }
+    }
+
+
+    $('.select2').select2();
+
+
+
+</script>

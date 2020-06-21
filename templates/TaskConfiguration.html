@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/popper.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap4.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+
+    <script type="text/javascript"
+        src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.bootstrap4.min.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/searchpanes/1.0.1/css/searchPanes.bootstrap4.min.css" />
+
+    <script type="text/javascript"
+        src="https://cdn.datatables.net/searchpanes/1.0.1/js/dataTables.searchPanes.min.js"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" language="javascript"
+        src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" language="javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <title>Task Configuration</title>
+
+</head>
+
+<body class="">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <a class="navbar-brand" href="#">Workflow</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="">Home</a>
+                <a class="nav-item nav-link active" href="#">Task Configuration<span
+                        class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="#">Product Requisition</a>
+            </div>
+
+            <div class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.user_name }} &#9679; {{ user.role }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right text-left" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Something</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="../logout/">Logout</a>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <br><br>
+        <label class="role">{{ username }}</label>
+        <h2 class="mb-4">Task Configuration</h2>
+        <div class="card bg-light mb-5" id="Dashboard">
+
+            <h2 class="mb-4">Table</h2>
+
+            <!-- KAM and COPC Ticket Table -->
+            <div class="card bg-light mb-5 p-2" id="kam_copc_table_div">
+                <div class="card-body">
+                    <table id="kam_copc_table" class="table table-striped table-bordered text-center"
+                        style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>WFID</th>
+                                <th>Workflow Type</th>
+                                <th>BS Code</th>
+                                <th>Global Status</th>
+                                <th>First Issued</th>
+                                <th>Last Updated</th>
+                                <th>Current Stage</th>
+                                <th>Pending To</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>
+
+<script>
+
+
+    $(document).ready(function () {
+        
+
+
+
+
+    function fire() {
+        var ans = "";
+        $.get("../__fire_next/",
+            {
+                'wfid': cell.getRow().getCell("WFID").getValue(),
+            },
+            function (data, status) {
+                console.log("Data: " + data);
+                ans = data;
+            });
+    }
+
+
+    //add rows
+    // $("#create").click(function () {
+
+    //     table.addRow({});
+    // });
+</script>

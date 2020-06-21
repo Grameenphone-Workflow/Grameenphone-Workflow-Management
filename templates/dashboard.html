@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/popper.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/font-awesome.min.css' %}">
+
+
+    <link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}">
+    <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/responsive.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.responsive.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/buttons.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static '/css/searchPanes.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.searchPanes.min.js' %}"></script>
+
+    <script src="{% static '/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static '/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static '/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static '/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static '/js/jszip.min.js' %}"></script>
+    <script src="{% static '/js/vfs_fonts.js' %}"></script>
+    <script src="{% static '/js/a076d05399.js' %}"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" />
+
+    <link rel="stylesheet" href="{% static '/css/free.min.css' %}">
+
+
+    <style>
+        html {
+            font-size: 0.8rem;
+        }
+
+        @include media-breakpoint-up(sm) {
+            html {
+                font-size: 1.2rem;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            html {
+                font-size: 1.4rem;
+            }
+        }
+
+        @include media-breakpoint-up(lg) {
+            html {
+                font-size: 1.6rem;
+            }
+        }
+
+        @font-face {
+            font-family: telenor;
+            src: url("{% static '/fonts/Telenor-Regular.otf' %}");
+        }
+
+        body {
+            font-family: telenor;
+        }
+    </style>
+
+
+
+    <title>Dashboard</title>
+</head>
+
+<!-- 
+    TODO:
+    Add logout button/profile dropdown with change password/logout.
+    Navigation bar.
+    The navigation bar should be on the side bar.
+    Make this whole page prettier following the same scheme as the login page.
+
+    TODO:
+    Fix the visualization of the table. See if better formatting, text alignment etc is available.
+    That is, make it look more professional.
+    Do not delete any existing code.
+
+    TODO:
+    If needed add animations so that the rows don't disappear immediately.
+    Makes it less jarring when it happens.
+-->
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <a class="navbar-brand" href="../dashboard/"><img src="{% static '/images/white-telenor.png' %}" width="25px"
+                class="mr-3">Workflow<sup class="font-weight-light">Lite</sup></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="">Dashboard <span class="sr-only">(current)</span></a>
+                <!-- <a class="nav-item nav-link" href="#">Onboarding</a>
+                <a class="nav-item nav-link" href="#">Product Requisition</a> -->
+                <a class="nav-item nav-link" href="../tickets/">Onboarding Tickets</a>
+                <a class="nav-item nav-link" href="../requisition_tickets/">Requisition Tickets</a>
+                <a class="nav-item nav-link" href="../visit/visiting_home">Visiting</a>
+            </div>
+
+            <div class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.username }} &#9679; {{ user.role }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right text-left" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Something</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="../logout/">Logout</a>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <br>
+        <label class="role">{{ role }}</label>
+
+        <div class="card bg-light mb-5" id="Dashboard">
+            <div class="container-fluid">
+                <div id="create_workflow_options">
+                    <div id="content" class="p-3 p-md-3 pt-5">
+                        <div class="card-body">
+                            <form action="../start_workflow/" method="POST">
+                                <h5 for="">Select Workflow</h5>
+                                <select class="browser-default custom-select m-2" name="selected_workflow_type" id=""
+                                    style="width: auto;">
+                                    <option value="" disabled selected>Select Workflow Type</option>
+                                    <option value="ONBOARDING" selected>Onboarding</option>
+                                    <option value="PRODUCT_REQUISITION">O2C</option>
+                                </select>
+                                {% csrf_token %}
+                                <button class="btn btn-primary m-2" id="create">Start New Workflow</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="mb-4">Tickets</h2>
+
+        <!-- KAM and COPC Ticket Table -->
+        <div class="card bg-light mb-5" id="kam_copc_table_div">
+            <div class="card-body">
+                <table id="kam_copc_table" class="table table-striped table-bordered text-center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>BS Code</th>
+                            <th>Company Name</th>
+                            <th>Workflow Type</th>
+                            <th>Previous Stage</th>
+                            <th>Last Updated</th>
+                            <th>First Issued</th>
+                            <th>Global Status</th>
+                            <th>Pending To</th>
+                            <th>Remarks</th>
+                            <th>Reference ID</th>
+                            <th>Submit</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>BS Code</th>
+                            <th>Company Name</th>
+                            <th>Workflow Type</th>
+                            <th>Previous Stage</th>
+                            <th>Last Updated</th>
+                            <th>First Issued</th>
+                            <th>Global Status</th>
+                            <th>Pending To</th>
+                            <th>Remarks</th>
+                            <th>Reference ID</th>
+                            <th>Submit</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="card bg-light mb-5" id="gerp_table_div">
+            <div class="card-body">
+                <h2 class="mb-4">GERP Table</h2>
+                <table id="gerp_table" class="table table-striped table-bordered text-center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reference ID</th>
+                            <th>Request Task</th>
+                            <th>Customer Number</th>
+                            <th>Customer Name</th>
+                            <th>Vendor Type</th>
+                            <th>Customer Type</th>
+                            <th>Tax Payer ID</th>
+                            <th>Tax Registration Number (VAT)</th>
+                            <th>Customer Address 1</th>
+                            <th>Customer Address 2</th>
+                            <th>Customer Address 3</th>
+                            <th>City</th>
+                            <th>Postal Code</th>
+                            <th>Country</th>
+                            <th>Submit</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reference ID</th>
+                            <th>Request Task</th>
+                            <th>Customer Number</th>
+                            <th>Customer Name</th>
+                            <th>Vendor Type</th>
+                            <th>Customer Type</th>
+                            <th>Tax Payer ID</th>
+                            <th>Tax Registration Number (VAT)</th>
+                            <th>Customer Address 1</th>
+                            <th>Customer Address 2</th>
+                            <th>Customer Address 3</th>
+                            <th>City</th>
+                            <th>Postal Code</th>
+                            <th>Country</th>
+                            <th>Submit</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-5" id="lerp_table_div">
+            <div class="card-body">
+                <h2 class="mb-4">LERP Table</h2>
+                <table id="lerp_table" class="table table-striped table-bordered text-center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reference ID</th>
+                            <th>Partner Number</th>
+                            <th>Partner Name</th>
+                            <th>Partner Category</th>
+                            <th>Partner Type</th>
+                            <th>Address</th>
+                            <th>Country</th>
+                            <th>City</th>
+                            <th>District</th>
+                            <th>Submit</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reference ID</th>
+                            <th>Partner Number</th>
+                            <th>Partner Name</th>
+                            <th>Partner Category</th>
+                            <th>Partner Type</th>
+                            <th>Address</th>
+                            <th>Country</th>
+                            <th>City</th>
+                            <th>District</th>
+                            <th>Submit</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-5" id="lerp_table_div_2">
+            <div class="card-body">
+                <h2 class="mb-4">LERP Table 2</h2>
+                <table id="lerp_table_2" class="table table-striped table-bordered text-center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reference ID</th>
+                            <th>Company Code</th>
+                            <th>Company Name</th>
+                            <th>BSCODE</th>
+                            <th>Company Context</th>
+                            <th>VAT Reg Num</th>
+                            <th>Company Address</th>
+                            <th>Employee ID</th>
+                            <th>Entry Date</th>
+                            <th>ERP Cust Num</th>
+                            <th>Disable Date</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reference ID</th>
+                            <th>Company Code</th>
+                            <th>Company Name</th>
+                            <th>BSCODE</th>
+                            <th>Company Context</th>
+                            <th>VAT Reg Num</th>
+                            <th>Company Address</th>
+                            <th>Employee ID</th>
+                            <th>Entry Date</th>
+                            <th>ERP Cust Num</th>
+                            <th>Disable Date</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-5" id="va_table_div">
+            <div class="card-body">
+                <h2 class="mb-4">VA Table</h2>
+                <table id="va_table" class="table table-striped table-bordered text-center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reference ID</th>
+                            <th>KAM</th>
+                            <th>Company Type</th>
+                            <th>BS Code</th>
+                            <th>Company Name</th>
+                            <th>Remarks</th>
+                            <th>VA Code (Usage)</th>
+                            <th>VA Code (Start-up)</th>
+                            <th>Submit</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reference ID</th>
+                            <th>KAM</th>
+                            <th>Company Type</th>
+                            <th>BS Code</th>
+                            <th>Company Name</th>
+                            <th>Remarks</th>
+                            <th>VA Code (Usage)</th>
+                            <th>VA Code (Start-up)</th>
+                            <th>Submit</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-5" id="clc_table_div">
+            <div class="card-body">
+                <h2 class="mb-4">CLC Table</h2>
+                <table id="clc_table" class="table table-striped table-bordered text-center" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Reference ID</th>
+                            <th>KAM ID</th>
+                            <th>KAM Name</th>
+                            <th>Mobile No</th>
+                            <th>Description</th>
+                            <th>QTY</th>
+                            <th>Remarks</th>
+                            <th>ERP Code</th>
+                            <th>Assign</th>
+                            <th>Submit</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- Submit Modal -->
+        <div class="modal fade" id="submit_modal" tabindex="-1" role="dialog" aria-labelledby="submit_modal_label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="submit_modal_label">Are you sure you want to submit?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea placeholder="Add an optional remark" id="submit_remark" class="form-control"
+                            style="min-width: 100%"></textarea>
+                        <input type="text" id="erp_code" name="erp_code" value="" placeholder="Enter the ERP code"
+                            class="form-control mt-3" hidden>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button onclick="fireNext(this.name)" name="Default" id="fire_submit_button" type="submit"
+                            class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reject Modal -->
+        <div class="modal fade" id="reject_modal" tabindex="-1" role="dialog" aria-labelledby="reject_modal_label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reject_modal_label">Are you sure you want to reject?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea placeholder="Add an optional remark" id="rejection_remark" class="form-control"
+                            style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button onclick="rejectPrev(this.name)" name="Default" id="fire_reject_button" type="submit"
+                            class="btn btn-danger">Reject</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+<label id="username" hidden>{{ user.username }}</label>
+
+</html>
+
+<script>
+
+
+    $(document).ready(function () {
+        $('.role').hide();
+        $('#kam_copc_table_div').hide();
+        $('#gerp_table_div').hide();
+        $('#lerp_table_div').hide();
+        $('#lerp_table_div_2').hide();
+        $('#va_table_div').hide();
+        $('#clc_table_div').hide();
+
+
+        if ($('.role').text() == "KAM") {
+            $('#create_workflow_options').show();
+        } else {
+            $('#create_workflow_options').hide();
+        }
+
+
+
+        if ($('.role').text() == "KAM" || $('.role').text() == "COPC") {
+            $('#kam_copc_table_div').show();
+            var table = $('#kam_copc_table').DataTable({
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $('<select><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                },
+                "ajax": {
+                    "url": "../fetch_tickets_specific",
+                    "data": {
+                        "role": $('.role').text(),
+                        "username": $('#username').text(),
+                    }
+                },
+                "order": [[6, "asc"]],
+                "columns": [
+                    { "data": "BS Code" },
+                    { "data": "Company Name" },
+                    { "data": "Workflow Type" },
+                    { "data": "Current Stage" },
+                    { "data": "First Issued" },
+                    { "data": "Last Updated" },
+                    { "data": "Global Status" },
+                    { "data": "Pending To" },
+                    { "data": "Remarks" },
+                    { "data": "WFID" },
+                    {
+                        "targets": -1,
+                        "data": "null",
+                        "defaultContent": `<button id="go" type="button" class="btn btn-success" data-toggle="modal"
+                        data-target="#submit_modal">Submit</button>`
+                    },
+                ],
+
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    ['10 rows', '25 rows', '50 rows', 'Show all']
+                ],
+                "order": [[5, "desc"]],
+
+                dom: 'Bfrtip',
+                "buttons": [
+                    'copy', 'csv', 'excelHtml5', 'colvis', 'pageLength',
+
+                ],
+                pageLength: 10,
+                filter: true,
+                scrollCollapse: true,
+                scroller: true,
+                responsive: true
+            });
+
+            $('#kam_copc_table tbody').on('dblclick', 'tr', function () {
+                var data = table.row(this).data();
+                // console.log(data.WFID);
+                // alert('You clicked on ' + data.WFID + '\'s row');
+                if (data.WFID.includes("OBD"))
+                    var win = window.open('../onboarding_form_draft/' + data.WFID);
+                else
+                    var win = window.open('../product_requisition_form_draft/' + data.WFID);
+                win.focus(); var data = table.row(this).data();
+            });
+
+            $('#kam_copc_table tbody').on('click', 'button', function () {
+                var data = table.row(this).data();
+                if (data === undefined) {
+                    data = table.row($(this).parents('tr')).data();
+                }
+
+                if (data["BS Code"] == "" && $('.role').text() == "COPC") {
+                    $('#fire_submit_button').prop('hidden', true);
+                }
+                else
+                    $('#fire_submit_button').prop('hidden', false);
+
+                $('#fire_submit_button').attr('name', data.WFID);
+                console.log($('#fire_submit_button').attr('name'));
+            });
+
+            console.log(table.columns());
+
+
+        } else if ($('.role').text() == "GERP") {
+            var table = $('#gerp_table').DataTable({
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $('<select><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                },
+                "ajax": "../fetch_gerp_table/",
+                "columns": [
+                    { "data": "Date" },
+                    { "data": "Time" },
+                    { "data": "WFID" },
+                    { "data": "Request Task" },
+                    { "data": "Customer Number" },
+                    { "data": "Customer Name" },
+                    { "data": "Vendor Type" },
+                    { "data": "Customer Type" },
+                    { "data": "Tax Payer ID" },
+                    { "data": "Tax Registration Number (VAT)" },
+                    { "data": "Customer Address 1" },
+                    { "data": "Customer Address 2" },
+                    { "data": "Customer Address 3" },
+                    { "data": "City" },
+                    { "data": "Postal Code" },
+                    { "data": "Country" },
+                    {
+                        "targets": -1,
+                        "data": null,
+                        "defaultContent": `<button type="submit" class="btn btn-success" data-toggle="modal"
+                        data-target="#submit_modal">Submit</button>`
+                    },
+                ],
+                dom: 'Bfrtip',
+                "buttons": [
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                        }
+                    },
+                    'copy',
+                ],
+                pageLength: 10,
+                filter: true,
+                scrollCollapse: true,
+                scroller: true,
+                responsive: true
+            });
+            $('#gerp_table tbody').on('click', 'button', function () {
+                var data = table.row(this).data();
+                if (data === undefined) {
+                    data = table.row($(this).parents('tr')).data();
+                }
+                $('#fire_submit_button').attr('name', data.WFID);
+                $('#fire_reject_button').attr('name', data.WFID);
+                console.log($('#fire_reject_button').attr('name'));
+                console.log($('#fire_submit_button').attr('name'));
+            });
+
+            $('#gerp_table_div').show();
+        } else if ($('.role').text() == "LERP") {
+            $('#erp_code').prop("hidden", false);
+            console.log("i am here");
+            $('#lerp_table_div_2').show();
+            var table = $('#lerp_table').DataTable({
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $('<select><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                },
+                "ajax": "../fetch_lerp_table/",
+                "columns": [
+                    { "data": "Date" },
+                    { "data": "Time" },
+                    { "data": "WFID" },
+                    { "data": "Partner Number" },
+                    { "data": "Partner Name" },
+                    { "data": "Partner Category" },
+                    { "data": "Partner Type" },
+                    { "data": "Address" },
+                    { "data": "Country" },
+                    { "data": "City" },
+                    { "data": "District" },
+                    {
+                        "data": null,
+                        "defaultContent": `<button type="submit" class="btn btn-success" data-toggle="modal"
+                        data-target="#submit_modal">Submit</button>`
+                    },
+                ],
+                dom: 'Bfrtip',
+                "buttons": [
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: [3, 4, 5, 6, 7, 8, 9, 10]
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [3, 4, 5, 6, 7, 8, 9, 10]
+                        }
+                    },
+                    'copy',
+                ],
+                pageLength: 10,
+                filter: true,
+                scrollCollapse: true,
+                scroller: true,
+                responsive: true
+            });
+            $('#lerp_table tbody').on('click', 'button', function () {
+                var data = table.row(this).data();
+                if (data === undefined) {
+                    data = table.row($(this).parents('tr')).data();
+                }
+                $('#fire_submit_button').attr('name', data.WFID);
+                $('#fire_reject_button').attr('name', data.WFID);
+                console.log($('#fire_reject_button').attr('name'));
+                console.log($('#fire_submit_button').attr('name'));
+            });
+
+            var table2 = $('#lerp_table_2').DataTable({
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $('<select><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                },
+                "ajax": "../fetch_lerp_table_2/",
+                "columns": [
+                    { "data": "Date" },
+                    { "data": "Time" },
+                    { "data": "WFID" },
+                    { "data": "Company Code" },
+                    { "data": "Company Name" },
+                    { "data": "BSCODE" },
+                    { "data": "Company Context" },
+                    { "data": "VAT Reg Num" },
+                    { "data": "Company Address" },
+                    { "data": "Employee ID" },
+                    { "data": "Entry Date" },
+                    { "data": "ERP Cust Num" },
+                    { "data": "Disable Date" },
+                
+                ],
+                dom: 'Bfrtip',
+                "buttons": [
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: [3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        }
+                    },
+                    'copy',
+                ],
+                pageLength: 10,
+                filter: true,
+                scrollCollapse: true,
+                scroller: true,
+                responsive: true
+            });
+            $('#lerp_table_2 tbody').on('click', 'button', function () {
+                var data = table2.row(this).data();
+                if (data === undefined) {
+                    data = table2.row($(this).parents('tr')).data();
+                }
+                $('#fire_submit_button').attr('name', data.WFID);
+                $('#fire_reject_button').attr('name', data.WFID);
+                console.log($('#fire_reject_button').attr('name'));
+                console.log($('#fire_submit_button').attr('name'));
+            });
+
+
+            $('#lerp_table_div').show();
+        } else if ($('.role').text() == "VA") {
+            var table = $('#va_table').DataTable({
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $('<select><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                },
+                "ajax": "../fetch_va_table/",
+                "columns": [
+                    { "data": "Date" },
+                    { "data": "Time" },
+                    { "data": "WFID" },
+                    { "data": "KAM" },
+                    { "data": "Company Type" },
+                    { "data": "BS Code" },
+                    { "data": "Company Name" },
+                    { "data": "Remarks" },
+                    { "data": "VA Code (Usage)" },
+                    { "data": "VA Code (Start-up)" },
+                    {
+                        "data": null,
+                        "defaultContent": `<button type="button" class="btn btn-success" data-toggle="modal"
+                        data-target="#submit_modal">Submit</button>`
+                    },
+                ],
+                dom: 'Bfrtip',
+                "buttons": [
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: [3, 4, 5, 6, 7, 8, 9]
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [3, 4, 5, 6, 7, 8, 9]
+                        }
+                    },
+                    'copy',
+                ],
+                pageLength: 10,
+                filter: true,
+                scrollCollapse: true,
+                scroller: true,
+                responsive: true
+            });
+            $('#va_table tbody').on('click', 'button', function () {
+                console.log(table.row(this));
+                var data = table.row(this).data();
+                if (data === undefined) {
+                    data = table.row($(this).parents('tr')).data();
+                }
+                console.log(data);
+                $('#fire_submit_button').attr('name', data['WFID']);
+                $('#fire_reject_button').attr('name', data['WFID']);
+                console.log($('#fire_reject_button').attr('name'));
+                console.log($('#fire_submit_button').attr('name'));
+            });
+            $('#va_table_div').show();
+        } else if ($('.role').text() == "CLC") {
+            var table = $('#clc_table').DataTable({
+                "ajax": "../fetch_clc_table/",
+                "columns": [
+                    { "data": "WFID" },
+                    { "data": "KAM ID" },
+                    { "data": "KAM Name" },
+                    { "data": "Mobile No" },
+                    { "data": "Description" },
+                    { "data": "QTY" },
+                    { "data": "Item Type" },
+                    { "data": "Remarks" },
+                    { "data": "ERP Code" },
+                    {
+                        "data": null,
+                        "defaultContent": `<button class="btn btn-warning">Assign</button>`
+                    },
+                    {
+                        "data": null,
+                        "defaultContent": `<button type="submit" class="btn btn-success" data-toggle="modal"
+                        data-target="#submit_modal">Submit</button>`
+                    },
+                ],
+                dom: 'Bfrtip',
+                "buttons": [
+                    'copy', 'csv', 'excel',
+                ],
+                pageLength: 10,
+                filter: true,
+                scrollCollapse: true,
+                scroller: true,
+                responsive: true
+            });
+            $('#clc_table tbody').on('click', 'button', function () {
+                var data = table.row(this).data();
+                if (data === undefined) {
+                    data = table.row($(this).parents('tr')).data();
+                }
+                $('#fire_submit_button').attr('name', data.WFID);
+                $('#fire_reject_button').attr('name', data.WFID);
+                console.log($('#fire_reject_button').attr('name'));
+                console.log($('#fire_submit_button').attr('name'));
+            });
+            console.log($('#clc_table'));
+            $('#clc_table_div').show();
+            $('#clc_table tbody').on('dblclick', 'tr', function () {
+                var data = table.row(this).data();
+                if (data === undefined) {
+                    data = table.row($(this).parents('tr')).data();
+                }
+                console.log(data.WFID);
+                alert('You clicked on ' + data.WFID + '\'s row');
+                var win = window.open('../clc_form/');
+                win.focus();
+            });
+        }
+
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+            $('.popover-dismiss').popover({
+                trigger: 'focus'
+            })
+        })
+    });
+
+    function fireNext(wfid) {
+        console.log(wfid);
+        console.log($('#submit_remark').val());
+
+        var role = $('.role').text();
+        console.log(role);
+        if (wfid.includes("OBD")) {
+            $.get("../__fire_next/",
+                {
+                    wfid: wfid,
+                    submit_remark: $('#submit_remark').val(),
+                    role: role,
+                    username: $('#username').text(),
+                    erp_code: $("#erp_code").val(),
+                },
+                function (data, status) {
+                    console.log("Data: " + data);
+                    ans = data;
+                });
+            // $('#onboarding_form').submit();
+        } else {
+            console.log("firing requisitoin");
+            $.get("../__fire_next_requisition/",
+                {
+                    wfid: wfid,
+                    submit_remark: $('#submit_remark').val(),
+                    role: role
+                },
+                function (data, status) {
+                    console.log("Data: " + data);
+                    ans = data;
+                });
+            // $('#onboarding_form').submit();
+        }
+
+        window.location.replace("../dashboard")
+    }
+
+    function rejectPrev(wfid) {
+        console.log($('#rejection_remark').val());
+        var role = $('.role').val();
+        $.get("../__reject_prev/",
+            {
+                wfid: wfid,
+                rejection_remark: $('#rejection_remark').val(),
+                role: role
+            },
+            function (data, status) {
+                console.log("Data: " + data);
+                ans = data;
+            });
+        window.location.replace("../dashboard")
+        // $('#onboarding_form').submit();''
+    }
+
+
+    //add rows
+    // $("#create").click(function () {
+
+    //     table.addRow({});
+    // });
+</script>

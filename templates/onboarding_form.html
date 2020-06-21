@@ -1,0 +1,740 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/popper.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static '/js/a076d05399.js' %}"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" />
+    <script src="{% static '/scripts/onboarding_scripts.js' %}"></script>
+    <style>
+        .nav li {
+            float: left;
+        }
+
+        @media screen and (min-width: 700px) {
+            #sla_table {
+                position: sticky;
+                top: 0;
+                right: 0;
+            }
+        }
+
+        html {
+            font-size: 0.8rem;
+        }
+
+        @include media-breakpoint-up(sm) {
+            html {
+                font-size: 1.2rem;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            html {
+                font-size: 1.4rem;
+            }
+        }
+
+        @include media-breakpoint-up(lg) {
+            html {
+                font-size: 1.6rem;
+            }
+        }
+
+        @font-face {
+            font-family: telenor;
+            src: url("{% static '/fonts/Telenor-Regular.otf' %}");
+        }
+
+        body {
+            font-family: telenor;
+        }
+    </style>
+
+
+    <title>Onboarding Form</title>
+</head>
+
+<body class="bg-light pt-5" data-spy="scroll" data-target="#scrollspy-nav-bar" data-offset="0">
+    <div id="scrollspy-nav-bar" class="mb-4">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <a class="navbar-brand" href="../dashboard/"><img src="{% static '/images/white-telenor.png' %}"
+                    width="25px" class="mr-3">Workflow<sup class="font-weight-light">Lite</sup></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#customer_information">Customer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#billing_information">Billing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#attachments">Attachments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#kcp_information">KCP</a></li>
+                </ul>
+                <div class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ user.username }} &#9679; {{ user.role }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right text-left" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="../dashboard/">Dasboard</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="../logout/">Logout</a>
+                        </div>
+                    </li>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="py-5 text-center">
+            <div class="h1">
+                <i class="fa fa-book fa-lg"></i>
+            </div>
+            <h2>Customer Onboarding</h2>
+            <p class="lead">Fill in the information appropriately.</p>
+        </div>
+
+        <div id="sla_table" class="float-right text-center col-md-4 pt-5">
+            <h1>Status Table</h1>
+            <table id="lookup_table" class="table table-striped">
+            </table>
+        </div>
+
+        <div class="col-md-8 order-md-1">
+            <form id="onboarding_form" action="../onboard/" method="POST" class="needs-validation"
+                enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <!-- Useful information. -->
+                <input type="hidden" name="workflow_id" value="{{ workflow_id }}" />
+                <h1 id="ticket_status" hidden>{{ current_stage }}</h1>
+                <h1 id="completed_stages" hidden>{{ completed_stages }}</h1>
+                <h1 id="workflow_id" hidden>{{ workflow_id }}</h1>
+                <h1 class="text-center" id="role_of_user" name="{{ user.role }}" hidden>{{ user.role }}</h1>
+                <!-- End of useful information -->
+
+                <div class="card bg-light mb-5" id="customer_information">
+                    <div class="card-body">
+                        <h2 class="mb-4">Customer Information</h2>
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-3 mb-4">
+                                <label for="corporate_type">Corporate Type</label>
+                                <select class="custom-select d-block w-100" id="corporate_type" name="corporate_type">
+                                    <option value="" disabled selected>Choose</option>
+                                    {% for key, value in customer.CORPORATE_TYPES %}
+                                    <option value="{{ value }}" {% if customer.corporate_type == value %} selected
+                                        {% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-5 mb-4">
+                                <label for="corporate_name">Corporate Name</label>
+                                <div class="input-group">
+                                    <input onblur="CheckCorporateNameAvailability(this.value)" type="text"
+                                        class="form-control" id="corporate_name" name="corporate_name"
+                                        value="{{ customer.corporate_name | default_if_none:'' }}" required>
+                                    <div class="invalid-feedback" style="width: 100%;">
+                                        This is a required field.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <label for="corporate_short_name">Corporate Short Name</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="corporate_short_name"
+                                        value="{{ customer.corporate_short_name | default_if_none:'' }}"
+                                        name="corporate_short_name" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3 mb-4">
+                                <label for="customer_type">Type of BS Code</label>
+                                <select onchange="ParentChildBSCodeSelection()" class="custom-select d-block w-100"
+                                    id="bs_code_type" name="bs_code_type">
+                                    <option value="Child">Child</option>
+                                    <option value="Parent" {% if customer.parent_bs_code == None %} selected
+                                        {% endif %}>Parent</option>
+                                </select>
+                            </div>
+                            <div id="parent_bs_code_section" class="mb-3 col-md-3">
+                                <label for="parent_bs_code">Parent BS Code</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="parent_bs_code"
+                                        value="{{ customer.parent_bscode | default_if_none:'' }}" name="parent_bs_code"
+                                        readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <label id="bs_code_label" for="bs_code">BS Code</label>
+                                <div class="input-group">
+                                    <input type="text" onchange="CheckBSCodeAvailability(this.value)"
+                                        value="{{ customer.bscode | default_if_none:"" }}" class="form-control"
+                                        id="bs_code" name="bs_code" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="sub_segments">Choose Sub-Segment</label>
+                                <select class="custom-select d-block w-100" id="sub_segment" name="sub_segment"
+                                    value="{{ customer.subsegment }}" disabled>
+                                    <option value="" disabled selected>Choose</option>
+                                    {% for key, value in customer.SUBSEGMENTS %}
+                                    <option value="{{ value }}" {% if customer.subsegment == value %} selected
+                                        {% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="zone">Zone</label>
+                                <select class="custom-select d-block w-100" id="zone" name="zone"
+                                    value="{{ customer.kam_id }}" disabled>
+                                    <option value="" selected>Choose</option>
+                                    {% for key, value in customer.ZONES %}
+                                    <option value="{{ value }}" {% if customer.zone == value %} selected {% endif %}>
+                                        {{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="kam_name">KAM Owner</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control"
+                                        value="{% if customer.kam_name is not None %}{{ customer.kam_name }}{% else %}{{ user.username }}{% endif %}"
+                                        id="kam_name" name="kam_name" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" hidden>
+                            <div class="col-md-5 mb-4">
+                                <label for="bs_customer_region">Delivery Location</label>
+                                <input type="text" class="form-control"
+                                    value="{{ customer.bs_customer_region | default_if_none:'' }}"
+                                    id="bs_customer_region" name="bs_customer_region">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-5" id="billing_information">
+                    <div class="card-body">
+                        <h2 class="mb-4">Billing Information</h2>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="address_1">Address</label>
+                            <textarea class="form-control" id="address_1" rows="3"
+                                name="address_1">{{ customer.address1 | default_if_none:"" }}</textarea>
+                            <div class="invalid-feedback" style="width: 100%;">
+                                Please enter an address.
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3 mb-4">
+                                <label for="city">City</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control "
+                                        value="{{ customer.city | default_if_none:"" }}" id="city" name="city" disabled>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-md-3 mb-4">
+                                <label for="zip_code">Zip Code</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control "
+                                        value="{{ customer.zip_code | default_if_none:"" }}" id="zip_code"
+                                        name="zip_code" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label for="address_2">Address 2</label>
+                            <textarea class="form-control" id="address_2" rows="3"
+                                name="address_2">{{ customer.address2 | default_if_none:"" }}</textarea>
+                        </div> -->
+
+                        <div class="form-group">
+                            <label for="gerp_address">GERP Address</label>
+                            <textarea class="form-control" id="gerp_address" rows="3" name="gerp_address"
+                                style="text-transform: uppercase;"
+                                readonly>{{ customer.gerp_address | default_if_none:"" }}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="erp_company_code">ERP Company Code</label>
+                                <input type="text" class="form-control"
+                                    value="{{ customer.erp_company_code | default_if_none:"" }}" id="erp_company_code"
+                                    name="erp_company_code" disabled>
+                            </div>
+                        </div>
+
+                        <!-- <div class="row">
+                            <div class="col-md-3 mb-4">
+                                <label for="district">District</label>
+                                <select class="custom-select d-block w-100" value="{{ customer.district }}"
+                                    id="district" name="district" disabled>
+                                    <option value="" disabled selected>Choose</option>
+                                    {% for key, value in customer.DISTRICTS %}
+                                    <option value="{{ value }}" {% if customer.district == value %} selected
+                                        {% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <label for="thana">Thana</label>
+                                <select class="custom-select d-block w-100" value="{{ customer.thana }}" id="thana"
+                                    name="thana" disabled>
+                                    <option value="" disabled selected>Choose</option>
+                                    {% for key, value in customer.THANAS %}
+                                    <option value="{{ value }}" {% if customer.thana == value %} selected {% endif %}>
+                                        {{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="rate_plan">Rate Plan</label>
+                                <select class="custom-select d-block w-100" id="rate_plan" value="{{ customer.rate }}"
+                                    name="rate_plan" disabled>
+                                    <option value="" disabled selected>Choose</option>
+                                    {% for key, value in customer.RATEPLANS %}
+                                    <option value="{{ value }}" {% if customer.rate == value %} selected {% endif %}>
+                                        {{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="rate_bdt">Rate BDT</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control col-md-4" id="rate_bdt"
+                                        value="{{ customer.rate | default_if_none:""  }}" name="rate_bdt" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 mb-4">
+                                <label for="cug_id">CUG ID</label>
+                                <select class="custom-select d-block w-100" id="cug_id" value="{{ customer.cug_id }}"
+                                    name="cug_id" disabled>
+                                    <option value="" disabled selected>Choose</option>
+                                    {% for key, value in customer.CUGID %}
+                                    <option value="{{ value }}" {% if customer.cug_id == value %} selected {% endif %}>
+                                        {{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-5 mb-4">
+                                <label for="pulse">Pulse</label>
+                                <select class="custom-select d-block w-100" value="{{ customer.pulse }}" id="pulse"
+                                    name="pulse" disabled>
+                                    <option value="" disabled selected>Choose</option>
+                                    {% for key, value in customer.PULSES %}
+                                    <option value="{{ value }}" {% if customer.pulse == value %} selected {% endif %}>
+                                        {{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-5 mb-4">
+                                <label for="cug_pulse">CUG Pulse</label>
+                                <select class="custom-select d-block w-100" value="{{ customer.cug_pulse }}"
+                                    id="cug_pulse" name="cug_pulse" disabled>
+                                    <option value="" disabled selected>Choose</option>
+                                    {% for key, value in customer.CUG_PULSES %}
+                                    <option value="{{ value }}" {% if customer.cug_pulse == value %} selected
+                                        {% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-5 mb-4">
+                                <label for="vat_waiver_flag">VAT Waiver Flag</label>
+                                <select class="custom-select d-block w-100" value="{{ customer.vat_waiver_flag }}"
+                                    id="vat_waiver_flag" name="vat_waiver_flag" disabled>
+                                    <option value="" disabled selected>Choose</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="bill_cycle">Bill Cycle</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control col-md-2"
+                                    value="{{ customer.bill_cycle | default_if_none:"" }} " id="bill_cycle"
+                                    name="bill_cycle" disabled>
+                            </div>
+                        </div> -->
+
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-5" id="attachments">
+                    <div class="card-body">
+                        <h2 class="mb-4">Attachments</h2>
+                        <hr>
+
+                        <div class="p-3 form-group">
+                            <label for="work_order_attach">Work Order/Customer Application</label>
+                            <input type="file" class="form-control-file" value="{{ customer.wo_ca_attach }}"
+                                id="work_order_application" name="work_order_application">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.wo_ca_attach }}/">View</a>
+                            {{ customer.wo_ca_attach }}
+                        </div>
+
+                        <div class="p-3 form-group">
+                            <label for="btrc_form_20191000">BTRC Form No - 20191000</label>
+                            <input type="file" class="form-control-file" value="{{ customer.btrc_form_1000 }}"
+                                id="btrc_form_20191000" name="btrc_form_20191000">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.btrc_form_1000 }}">View</a>
+                            {{ customer.btrc_form_1000 }}
+                        </div>
+
+                        <div class="p-3 form-group">
+                            <label for="btrc_form_20191001">BTRC Form No - 20191001</label>
+                            <input type="file" class="form-control-file" value="{{ customer.btrc_form }}"
+                                id="btrc_form_20191001" name="btrc_form_20191001">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.btrc_form }}">View</a>
+                            {{ customer.btrc_form }}
+                        </div>
+
+                        <div class="p-3 form-group">
+                            <label for="poc_id">Proof of Company Identity</label>
+                            <input type="file" class="form-control-file" value="{{ customer.proof_of_company_id }} "
+                                id="poc_id" name="poc_id">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.proof_of_company_id }}">View</a>
+                            {{ customer.proof_of_company_id }}
+                        </div>
+
+                        <div class="p-3 form-group">
+                            <label for="btrc_form_20191002">BTRC Form No - 20191002</label>
+                            <input type="file" class="form-control-file" value="{{ customer.btrc_form_2 }} "
+                                id="btrc_form_20191002" name="btrc_form_20191002">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.btrc_form_2 }}">View</a>
+                            {{ customer.btrc_form_2 }}
+                        </div>
+
+                        <div class="p-3 form-group">
+                            <label for="nid_kcp">NID Copy of Authorized KCP</label>
+                            <input type="file" class="form-control-file" value="{{ customer.nid_authorized }}"
+                                id="nid_kcp" name="nid_kcp">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.nid_authorized }}">View</a>
+                            {{ customer.nid_authorized }}
+                        </div>
+
+                        <div class="p-3 form-group">
+                            <label for="poc_billing_address">Proof of Company Billing Address</label>
+                            <input type="file" class="form-control-file"
+                                value="{{ customer.proof_of_company_billing_address }}" id="poc_billing_address"
+                                name="poc_billing_address">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.proof_of_company_billing_address }}">View</a>
+                            {{ customer.proof_of_company_billing_address }}
+
+                        </div>
+
+                        <div class="p-3 form-group">
+                            <label for="agreement_copy">Agreement Copy</label>
+                            <input type="file" class="form-control-file" value="{{ customer.agreement_copy }}"
+                                id="agreement_copy" name="agreement_copy">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.agreement_copy }}">View</a>
+                            {{ customer.agreement_copy }}
+
+                        </div>
+
+                        <div class="p-3 form-group">
+                            <label for="poc_billing_address">Approved AMS</label>
+                            <input type="file" class="form-control-file" value="{{ customer.approved_ams }}"
+                                id="approved_ams" name="approved_ams">
+                            <a class="mt-2 btn btn-secondary" name="download-button" target="__blank"
+                                href="../download/{{ customer.approved_ams }}">View</a>
+                            {{ customer.approved_ams }}
+                        </div>
+                        <a class="mt-2 btn btn-primary" name="download-button" target="__blank" id="zip_download"
+                            href="../download_zip/{{ customer.corporate_name }}">Download Zip</a>
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+                <button id="submit_button" onclick="return confirm('Are you sure?');"
+                    class="btn btn-primary btn-lg btn-block col-md-3" type="submit">Save Request</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; Grameenphone Ltd.</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Privacy</a></li>
+            <li class="list-inline-item"><a href="#">Terms</a></li>
+            <li class="list-inline-item"><a href="#">Support</a></li>
+        </ul>
+    </footer>
+
+
+    </div>
+
+    <script>
+
+        $.get("../__get_sla/",
+            {
+                wfid: $('#workflow_id').text(),
+            },
+            function (data, boom) {
+                console.log("Data: " + data);
+                console.log("Data Length: " + data.length);
+                sla = data;
+                if (data.length == 0) {
+                    $('#sla_table').hide();
+                    return;
+                }
+                $('[data-toggle="popover"]').popover();
+                var table = document.getElementById("lookup_table");
+                var h2s = ["Onboarding Request", "BS Code Publish", "GERP Code Creation", "LERP Code Creation", "VA Code Creation"];
+                var i;
+                var status = $('#completed_stages').text();
+                var sla;
+                console.log(data);
+                for (var i = data.length - 1; i >= 0; i--) {
+                    console.log(i + " :" + data[i].task);
+                    console.log(data[i]);
+                    var row = table.insertRow(0);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    cell1.innerHTML = data[i].task;
+                    var color;
+                    console.log("Currently Dealing with: " + h2s[i]);
+                    cell2.innerHTML = data[i].fire_time;
+                    cell3.innerHTML = `<label class="fa fa-check text-success pt-2 pr-2"></label>`
+                    console.log(cell3.innerHTML);
+                }
+            }
+        );
+
+        (function () {
+            'use strict';
+
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                    $(form).find(".form-control:invalid").focus();
+                });
+            }, false);
+        })();
+        function ParentChildBSCodeSelection() {
+            var bsSelection = document.getElementById('bs_code_type');
+            console.log(bsSelection.value);
+            if (bsSelection.value == "Parent") {
+                console.log($('#bs_code_label').val());
+                $('#parent_bs_code').prop('readonly', true);
+                $('#bs_code_label').text("BS Code");
+            } else if (bsSelection.value == "Child") {
+                console.log($('#bs_code_label').val());
+                $('#parent_bs_code').prop('readonly', false);
+                $('#bs_code_label').text("Child BS Code");
+            }
+
+        }
+        $(document).ready(function () {
+
+            if ($('#workflow_id').text() == "" || $('#workflow_id').text() === undefined) {
+                console.log("Here");
+                var fileInputs = $('a[name = "download-button"]');
+                for (var i = 0; i < fileInputs.length; i++) {
+                    $('a[name = "download-button"]').prop('hidden', true);
+                }
+            }
+
+            console.log("Access Granted.");
+
+
+            $("body").scrollspy({ target: "#scrollspy-nav-bar", offset: 50 });
+            $('#content').scrollspy();
+            $('#ticket_status').hide();
+            $('#customer_information').hide();
+            $('#billing_information').hide();
+            $('#attachments').hide();
+            $('#kcp_information').hide();
+            $('#gerp_information').hide();
+            $('#site_details').hide();
+            $('#lerp_information').hide();
+            $('#va_details').hide();
+
+            var SUPER_ROLES = ["KAM", "COPC", "Superadmin"];
+            var VA_ROLE = "VA";
+            var LERP_ROLE = "LERP";
+            var GERP_ROLE = "GERP";
+            var role = $('#role_of_user').attr('name');
+            console.log(role);
+
+            console.log("Access Granted.");
+
+            var inputs = document.getElementsByTagName("input");
+            console.log(typeof (inputs));
+            for (var i = 0; i < inputs.length; i++) {
+                console.log(typeof (inputs[i]));
+                inputs[i].removeAttribute("disabled");
+            }
+
+            var selects = document.getElementsByTagName("select");
+            console.log(typeof (selects));
+            for (var i = 0; i < selects.length; i++) {
+                console.log(typeof (selects[i]));
+                selects[i].removeAttribute("disabled");
+            }
+
+            var textareas = document.getElementsByTagName("textarea");
+            console.log(typeof (textareas));
+            for (var i = 0; i < textareas.length; i++) {
+                console.log(typeof (textareas[i]));
+                textareas[i].removeAttribute("disabled");
+            }
+
+            if ($('#ticket_status').text() == "VA Code Creation" || $('#ticket_status').text() == "GERP Code Creation" || $('#ticket_status').text() == "LERP Code Creation" || $('#ticket_status').text() == "BS Code Publish") {
+                $('#submit_button').hide();
+                var inputs = document.getElementsByTagName("input");
+                console.log(typeof (inputs));
+                for (var i = 0; i < inputs.length; i++) {
+                    console.log(typeof (inputs[i]));
+                    inputs[i].setAttribute("disabled", true);
+                }
+
+                var selects = document.getElementsByTagName("select");
+                console.log(typeof (selects));
+                for (var i = 0; i < selects.length; i++) {
+                    console.log(typeof (selects[i]));
+                    selects[i].setAttribute("disabled", true);
+                }
+
+                var textareas = document.getElementsByTagName("textarea");
+                console.log(typeof (textareas));
+                for (var i = 0; i < textareas.length; i++) {
+                    console.log(typeof (textareas[i]));
+                    textareas[i].setAttribute("disabled", true);
+                }
+            }
+
+            if (role == "KAM") {
+                console.log("Configuring form for KAM");
+
+                $('#corporate_short_name').prop('readonly', false);
+
+                $('#customer_information').show();
+                $('#billing_information').show();
+                $("#erp_company_code").prop('readonly', true);
+
+                $("#parent_bs_code").prop('readonly', false);
+
+                $('#attachments').show();
+                $('#kcp_information').show();
+                if (!status.includes("Drafting Form") && !status == "") {
+                    var inputs = document.getElementsByTagName("input");
+                    console.log(typeof (inputs));
+                    for (var i = 0; i < inputs.length; i++) {
+                        console.log(typeof (inputs[i]));
+                        inputs[i].setAttribute("disabled", true);
+                    }
+
+                    var selects = document.getElementsByTagName("select");
+                    console.log(typeof (selects));
+                    for (var i = 0; i < selects.length; i++) {
+                        console.log(typeof (selects[i]));
+                        selects[i].setAttribute("disabled", true);
+                    }
+
+                    var textareas = document.getElementsByTagName("textarea");
+                    console.log(typeof (textareas));
+                    for (var i = 0; i < textareas.length; i++) {
+                        console.log(typeof (textareas[i]));
+                        textareas[i].setAttribute("disabled", true);
+                    }
+                }
+
+            } else if (role == "COPC") {
+                console.log("Configuring form for COPC");
+                $('#parent_bs_code').prop('readonly', false);
+                $('#bs_code').prop('readonly', false);
+                $('#corporate_short_name').prop('readonly', false);
+                $('#gerp_address').prop('readonly', false);
+                $('#corporate_name').prop('readonly', true);
+
+                $('#bs_code').prop('required', true);
+
+                $('#bs_code_type').prop('disabled', true);
+                $('#parent_bs_code').prop('readonly', true);
+
+                $('#customer_information').show();
+                $('#billing_information').show();
+                $('#attachments').show();
+                $('#kcp_information').show();
+                $('#gerp_information').hide();
+                $('#site_details').hide();
+                $('#lerp_information').hide();
+                $('#va_details').hide();
+            } else if (role == "GERP") {
+                $('#gerp_information').show();
+            } else if (role == "LERP") {
+                $('#lerp_information').show();
+            } else if (role == "VA") {
+                $('#va_details').show();
+            }
+
+
+            $('#kam_name').prop("readonly", true);
+        });
+
+    </script>
+</body>
+
+</html>

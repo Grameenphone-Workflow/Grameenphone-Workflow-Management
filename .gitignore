@@ -1,0 +1,15 @@
+newenv
+.secret
+__pycache__
+data/
+.sqlite3
+.password
+.mailserver
+.recievers
+.me
+statics/*.py
+WorkflowDB.sqlite3
+*.csv
+workflow_env
+static/
+statics/test.json

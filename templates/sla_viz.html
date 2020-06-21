@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/popper.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/font-awesome.min.css' %}">
+
+
+    <link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}">
+    <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/responsive.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.responsive.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/buttons.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static '/css/searchPanes.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.searchPanes.min.js' %}"></script>
+
+    <script src="{% static '/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static '/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static '/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static '/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static '/js/jszip.min.js' %}"></script>
+    <script src="{% static '/js/vfs_fonts.js' %}"></script>
+    <script src="{% static '/js/a076d05399.js' %}"></script>
+    <script src="{% static '/js/utils.js' %}"></script>
+
+
+    <script src="{% static '/js/Chart.min.js' %}"></script>
+
+
+    <link rel="stylesheet" href="{% static '/css/free.min.css' %}">
+
+    <style>
+        .wrapper {
+            height: 400px;
+            overflow-y: scroll;
+        }
+
+        .chartWrapper {
+            height: auto;
+        }
+
+        html {
+            font-size: 0.8rem;
+        }
+
+        @include media-breakpoint-up(sm) {
+            html {
+                font-size: 1.2rem;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            html {
+                font-size: 1.4rem;
+            }
+        }
+
+        @include media-breakpoint-up(lg) {
+            html {
+                font-size: 1.6rem;
+            }
+        }
+
+        @font-face {
+            font-family: telenor;
+            src: url("{% static '/fonts/Telenor-Regular.otf' %}");
+        }
+
+        body {
+            font-family: telenor;
+        }
+    </style>
+    <title>SLA Visualization</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <a class="navbar-brand" href="#">Workflow<sup class="font-weight-light">Lite</sup></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="../dashboard">Home</a>
+                <a class="nav-item nav-link active" href="../onboarding_sla_view">Onboarding<span
+                        class="sr-only">(current)</span></a>
+                <!-- <a class="nav-item nav-link" href="../o2c_sla_view">Product Requisition</a> -->
+            </div>
+
+            <div class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.username }} &#9679; {{ user.role }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right text-left" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="../dashboard">Dashboard</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="../logout/">Logout</a>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+
+    <div class="">
+        <br>
+        <label class="role" hidden>{{ role }}</label>
+        <div class="row">
+            <div class="col-md-3 border mr-auto ml-auto">
+                <h2 class="mt-4">Total Completion Velocity</h2>
+                <hr>
+                <div class="row d-flex justify-content-center">
+                    <canvas class="ml-2" id="ticket_age_chart" width="300" height="600"></canvas>
+                </div>
+            </div>
+            <div class="col-md-5 border">
+                <h2 class="mt-4 mb-3">Stage Completion Velocity</h2>
+                <hr>
+                <div class="row d-flex justify-content-center mt-auto">
+                    <canvas class="p-2 mt-2 mb-2" id="bscode-pending-chart" width="275" height="275"></canvas>
+                    <canvas class="p-2 mt-2 mb-2" id="gerp-pending-chart" width="275" height="275"></canvas>
+                </div>
+                <div class="row d-flex justify-content-center mt-auto">
+                    <canvas class="p-2 mt-2 mb-2" id="lerp-pending-chart" width="275" height="275"></canvas>
+                    <canvas class="p-2 mt-2 mb-2" id="va-pending-chart" width="275" height="275"></canvas>
+                </div>
+            </div>
+            <div class="col-md-2 ml-auto mr-auto border">
+                <h2 class="mt-4">Summary</h2>
+                <hr>
+                <div class="row d-flex justify-content-center">
+                    <canvas class="p-5 mb-3" id="myChart" width="250" height="250"></canvas>
+                    <canvas class="p-5 mb-3" id="myChart3" width="250" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="border col-xl-auto p-4 mb-3">
+            <!-- <h2 class="mt-4">Total Completion Velocity</h2>
+            <hr>
+            <div class="row d-flex justify-content-center">
+                <canvas class="ml-2" id="ticket_age_chart" width="600" height="600"></canvas>
+            </div> -->
+
+
+            <div id="averages" class="row d-flex justify-content-center" align="center">
+                <div class="card m-3 col-md-2">
+                    <div class="card-body">
+                        <h4 class="card-title">BS Code Mean Time</h4>
+                        Actual<h5 id="bscode_avg"></h5>
+                        <h5 id="">Expected: 24hrs</h5>
+                    </div>
+                </div>
+                <div class="card m-3 col-md-2">
+                    <div class="card-body">
+                        <h4 class="card-title">GERP Mean Time</h4>
+                        Actual<h5 id="gerp_avg"></h5>
+                        <h5 id="">Expected: 1 day</h5>
+                    </div>
+                </div>
+                <div class="card m-3 col-md-2">
+                    <div class="card-body">
+                        <h4 class="card-title">LERP Mean Time</h4>
+                        Actual<h5 id="lerp_avg"></h5>
+                        <h5 id="">Expected: 1 day</h5>
+                    </div>
+                </div>
+                <div class="card m-3 col-md-2">
+                    <div class="card-body">
+                        <h4 class="card-title">VA Mean Time</h4>
+                        Actual<h5 id="va_avg"></h5>
+                        <h5 id="">Expected: 1 day</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="mt-5 mb-5">
+
+            <div class="wrapper mt-4">
+                <select id="bscode_choices" onchange="selectedData(this.value)">
+
+                </select>
+                <div class="graph_container chartWrapper">
+                    <canvas id="Chart2"></canvas>
+                </div>
+            </div>
+
+        </div> -->
+        <h2 class="m-2">Onboarding Tickets Global</h2>
+        <div class="card bg-light mb-5 mt-4" id="ticket_sla_table_div">
+            <div class="card-body">
+                <table id="ticket_sla_table" class="table table-striped table-bordered text-center"
+                    style="width:100% nowrap">
+                    <thead>
+                        <tr>
+                            <th>BS Code</th>
+                            <th>Company</th>
+                            <th>KAM</th>
+                            <th>Sub Segment</th>
+                            <th>Onboarding Request</th>
+                            <th>BS Code Publish</th>
+                            <th>GERP Code Creation</th>
+                            <th>LERP Code Creation</th>
+                            <th>VA Code Creation</th>
+                            <th>Status</th>
+                            <th>Completion Time</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>BS Code</th>
+                            <th>Company</th>
+                            <th>KAM</th>
+                            <th>Sub Segment</th>
+                            <th>Onboarding Request</th>
+                            <th>BS Code Publish</th>
+                            <th>GERP Code Creation</th>
+                            <th>LERP Code Creation</th>
+                            <th>VA Code Creation</th>
+                            <th>Status</th>
+                            <th>Completion Time</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+<label id="username" hidden>{{ user.username }}</label>
+
+</html>
+<script>
+    var randomScalingFactor = function () {
+        return Math.round(Math.random() * 100);
+    };
+
+
+
+    var stats;
+    $.get("../__get_all_sla/",
+        function (data, status) {
+            stats = data;
+            var tickets = data.data;
+            var pass_count = 0;
+            var fail_count = 0;
+            for (var i = 0; i < tickets.length; i++) {
+                if (tickets[i].Status)
+                    pass_count += 1;
+                else
+                    fail_count += 1;
+            }
+
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: [
+                            fail_count,
+                            pass_count,
+                        ],
+                        backgroundColor: [
+                            window.chartColors.red,
+                            window.chartColors.green,
+                        ],
+                        label: 'SLA'
+                    }],
+                    labels: [
+                        'SLA Failed',
+                        'SLA Achieved',
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'SLA Summary'
+                    },
+                    responsive: false
+                }
+            });
+        });
+
+
+    $(document).ready(function () {
+
+
+        $.get("../__get_onboarding_averages/",
+            function (data, status) {
+                var results = data;
+
+                var bs_code_mean_text = results['BS Code Average'];
+                var gerp_mean_text = results['GERP Code Average'];
+                var lerp_mean_text = results['LERP Code Average'];
+                var va_mean_text = results['VA Code Average'];
+
+                if (results['BS Code Average'] > 24.0) {
+                    // console.log("BS code is over the limit");
+                    bs_code_mean_text = results['BS Code Average'] / 24.0;
+                    bs_code_mean_text = bs_code_mean_text.toFixed(2);
+
+                    $('#bscode_avg').text(bs_code_mean_text.toString() + " days");
+                } else {
+                    $('#bscode_avg').text(bs_code_mean_text.toString() + " hrs");
+                }
+
+                if (results['GERP Code Average'] > 24.0) {
+                    // console.log("GERP Code Average is over the limit");
+                    gerp_mean_text = results['GERP Code Average'] / 24.0;
+                    gerp_mean_text = gerp_mean_text.toFixed(2);
+
+                    $('#gerp_avg').text(gerp_mean_text.toString() + " days");
+                } else {
+                    $('#gerp_avg').text(gerp_mean_text.toString() + " hrs");
+                }
+
+                if (results['LERP Code Average'] > 24.0) {
+                    // console.log("LERP Code Average is over the limit");
+                    lerp_mean_text = results['LERP Code Average'] / 24.0;
+                    lerp_mean_text = lerp_mean_text.toFixed(2);
+
+                    $('#lerp_avg').text(lerp_mean_text.toString() + " days");
+                } else {
+                    $('#lerp_avg').text(lerp_mean_text.toString() + " hrs");
+                }
+
+                if (results['VA Code Average'] > 24.0) {
+                    // console.log("VA Code Average is over the limit");
+                    va_mean_text = results['VA Code Average'] / 24.0;
+                    va_mean_text = va_mean_text.toFixed(2);
+
+                    $('#va_avg').text(va_mean_text.toString() + " days");
+                } else {
+                    $('#va_avg').text(va_mean_text.toString() + " hrs");
+                }
+            });
+
+
+        $.get("../__get_pending_tickets_by_days/",
+            function (data, status) {
+                var three_day_count = 0;
+                var between_three_and_five = 0;
+                var more_than_five = 0;
+
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i] < 3.00) {
+                        three_day_count++;
+                    } else if (data[i] < 5.00) {
+                        between_three_and_five++;
+                    } else
+                        more_than_five++;
+                }
+
+                console.log(three_day_count);
+                console.log(between_three_and_five);
+                console.log(more_than_five);
+
+                var ctx = document.getElementById("ticket_age_chart");
+                var ticket_age_chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["0-3 Days", "3-5 Days", "5+ Days"],
+                        datasets: [{
+                            label: 'Tickets',
+                            data: [three_day_count, between_three_and_five, more_than_five],
+                            backgroundColor: [
+                                'rgba(38, 166, 91, 0.7)',
+                                'rgba(245, 229, 27, 0.7)',
+                                'rgba(242, 38, 19, 0.7)',
+                            ],
+                            borderColor: [
+                                'rgba(38, 166, 91, 1)',
+                                'rgba(245, 229, 27, 1)',
+                                'rgba(242, 38, 19, 1)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    stepSize: 1
+                                }
+                            }]
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                });
+            });
+
+
+
+
+
+        var table = $('#ticket_sla_table').DataTable({
+            // initComplete: function () {
+            //     this.api().columns().every(function () {
+            //         var column = this;
+            //         var select = $('<select><option value=""></option></select>')
+            //             .appendTo($(column.footer()).empty())
+            //             .on('change', function () {
+            //                 var val = $.fn.dataTable.util.escapeRegex(
+            //                     $(this).val()
+            //                 );
+
+            //                 column
+            //                     .search(val ? '^' + val + '$' : '', true, false)
+            //                     .draw();
+            //             });
+
+            //         column.data().unique().sort().each(function (d, j) {
+            //             select.append('<option value="' + d + '">' + d + '</option>')
+            //         });
+            //     });
+            // },
+            "ajax": "../__get_onboarding_sla/",
+            "columns": [
+                { "data": "BS Code" },
+                { "data": "Company" },
+                { "data": "KAM" },
+                { "data": "Sub Segment" },
+                { "data": "Onboarding Request" },
+                { "data": "BS Code Publish" },
+                { "data": "GERP Code Creation" },
+                { "data": "LERP Code Creation" },
+                { "data": "VA Code Creation" },
+                { "data": "Status" },
+                { "data": "Completion Time" }
+            ],
+            dom: 'Bfrtip',
+            "buttons": [
+                'copy', 'csv', 'excel',
+            ],
+            pageLength: 10,
+            filter: true,
+            scrollCollapse: true,
+            scroller: true,
+            responsive: false
+        });
+    });
+
+    var horizontal_chart;
+
+    $.get("../__get_onboarding_sla_diff/",
+        function (data, status) {
+            var barOptions_stacked = {
+                tooltips: {
+                    enabled: true
+                },
+                hover: {
+                    animationDuration: 0
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            fontFamily: "'Open Sans Bold', sans-serif",
+                            fontSize: 11
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Time in Hours"
+                        },
+                        gridLines: {
+                        },
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            display: false,
+                            color: "#fff",
+                            zeroLineColor: "#fff",
+                            zeroLineWidth: 0,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Companies"
+                        },
+                        ticks: {
+                            fontFamily: "'Open Sans Bold', sans-serif",
+                            fontSize: 11,
+
+                        },
+                        stacked: true
+                    }]
+                },
+                legend: {
+                    display: true
+                },
+
+                animation: {
+                    onComplete: function () {
+                        var chartInstance = this.chart;
+                        var ctx = chartInstance.ctx;
+                        ctx.textAlign = "left";
+                        ctx.font = "9px Open Sans";
+                        ctx.fillStyle = "#fff";
+
+                        Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
+                            var meta = chartInstance.controller.getDatasetMeta(i);
+                            Chart.helpers.each(meta.data.forEach(function (bar, index) {
+                                data = dataset.data[index];
+                                if (i == 0) {
+                                    ctx.fillText(data, 50, bar._model.y + 4);
+                                } else {
+                                    ctx.fillText(data, bar._model.x - 25, bar._model.y + 4);
+                                }
+                            }), this)
+                        }), this);
+                    }
+                },
+                pointLabelFontFamily: "Quadon Extra Bold",
+                scaleFontFamily: "Quadon Extra Bold",
+            };
+
+            var ctx = document.getElementById("Chart2");
+            data = data.data;
+            // console.log("Bar Chart Data: " + data);
+
+            var onboarding = [];
+            var bscode = [];
+            var gerp = [];
+            var lerp = [];
+            var va = [];
+            var wfids = [];
+
+
+
+            for (var i = 0; i < data.length; i++) {
+                // console.log("BS: " + data[i]["BS Code Publish"]);
+                bscode.push(data[i]["BS Code Publish"]);
+                wfids.push(data[i].WFID);
+            }
+
+            for (var i = 0; i < data.length; i++) {
+                // console.log("GERP: " + data[i]["GERP Code Creation"]);
+                gerp.push(data[i]["GERP Code Creation"]);
+            }
+
+            for (var i = 0; i < data.length; i++) {
+                // console.log("LERP: " + data[i]["LERP Code Creation"]);
+                lerp.push(data[i]["LERP Code Creation"]);
+            }
+
+            for (var i = 0; i < data.length; i++) {
+                // console.log("VA: " + data[i]["VA Code Creation"]);
+                va.push(data[i]["VA Code Creation"]);
+            }
+
+            // console.log("VA: " + va);
+
+            var option = document.getElementById('bscode_choices');
+            for (var i = 0; i < wfids.length; i++) {
+                option.innerHTML += `<option value=${i}>${wfids[i]}</option>`
+            }
+
+            horizontal_chart = new Chart(ctx, {
+                type: 'horizontalBar',
+
+                data: {
+                    datasets: [{
+                        label: "BS Code Publish",
+                        data: bscode,
+                        backgroundColor: "rgba(163,103,126,1)",
+                        // hoverBackgroundColor: "rgba(140,85,100,1)"
+                    }, {
+                        label: "GERP Code Creation",
+                        data: gerp,
+                        backgroundColor: "rgba(33,203,226,1)",
+                        // hoverBackgroundColor: "rgba(100,23,235,1)"
+                    }, {
+                        label: "LERP Code Creation",
+                        data: lerp,
+                        backgroundColor: "rgba(163,203,226,1)",
+                        // hoverBackgroundColor: "rgba(123,255,235,1)"
+                    }, {
+                        label: "VA Code Creation",
+                        data: va,
+                        backgroundColor: "rgba(35,100,226,1)",
+                        // hoverBackgroundColor: "rgba(146,100,235,1)"
+                    }],
+                    labels: wfids,
+                },
+                options: {
+                    options: barOptions_stacked,
+                    title: {
+                        display: true,
+                        text: 'Onboarding Tickets Timeline',
+                        position: 'top'
+                    },
+                    responsive: true
+                },
+            });
+            // horizontal_chart.data.datasets[1] = [horizontal_chart.data.datasets[1].data[0]];
+            // horizontal_chart.data.datasets[0] = [horizontal_chart.data.datasets[0].data[0]];
+            // horizontal_chart.data.datasets[2] = [horizontal_chart.data.datasets[2].data[0]];
+            // horizontal_chart.data.datasets[3] = [horizontal_chart.data.datasets[3].data[0]];
+            // horizontal_chart.data.labels = [horizontal_chart.data.labels[0]];
+            // horizontal_chart.update();
+
+
+        });
+
+    // function selectedData(index) {
+    //     horizontal_chart.data.datasets[1] = [horizontal_chart.data.datasets[1].data[index]];
+    //     horizontal_chart.data.datasets[0] = [horizontal_chart.data.datasets[0].data[index]];
+    //     horizontal_chart.data.datasets[2] = [horizontal_chart.data.datasets[2].data[index]];
+    //     horizontal_chart.data.datasets[3] = [horizontal_chart.data.datasets[3].data[index]];
+    //     horizontal_chart.update();
+
+    // horizontal_chart.data.datasets[0] = horizontal_chart.data.datasets[0].data[index];
+    // horizontal_chart.data.datasets[1] = horizontal_chart.data.datasets[1].data[index];
+    // horizontal_chart.data.datasets[2] = horizontal_chart.data.datasets[2].data[index];
+    // horizontal_chart.data.datasets[3] = horizontal_chart.data.datasets[3].data[index];
+
+    //     horizontal_chart.update();
+    // }
+
+
+    // Ticket Pie-Chart
+    $.get("../fetch_tickets/",
+        function (data, status) {
+            // console.logconsole.log("Data: " + data);
+            stats = data;
+            // console.log(data.data);
+            var tickets = data.data;
+            var pass_count = 0;
+            var fail_count = 0;
+            for (var i = 0; i < tickets.length; i++) {
+                if (tickets[i]["Global Status"] == "Completed")
+                    pass_count += 1;
+                else
+                    fail_count += 1;
+            }
+            // console.log(fail_count, pass_count);
+
+            var ctx = document.getElementById('myChart3').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: [
+                            fail_count,
+                            pass_count,
+                        ],
+                        backgroundColor: [
+                            window.chartColors.yellow,
+                            window.chartColors.green,
+                        ],
+                        label: 'SLA'
+                    }],
+                    labels: [
+                        'Pending Tickets',
+                        'Completed Tickets',
+                    ]
+                },
+                options: {
+                    
+                    title: {
+                        display: true,
+                        text: 'Ticket Summary'
+                    },
+                    responsive: false
+                }
+            });
+        });
+
+    $.get("../__gerp_sla_days/",
+        function (data, status) {
+            var three_day_count = 0;
+            var one_day_count = 0;
+            var more_than_three = 0;
+
+            for (var i = 0; i < data.length; i++) {
+                if (data[i] < 1.00) {
+                    one_day_count++;
+                } else if (data[i] < 3.00) {
+                    three_day_count++;
+                } else
+                    more_than_three++;
+            }
+            var total = one_day_count + three_day_count + more_than_three;
+
+            var ctx = document.getElementById("gerp-pending-chart");
+            var ticket_age_chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["1 Day", "2-3 Days", "3+ Days"],
+                    datasets: [{
+                        label: '',
+                        data: [one_day_count, three_day_count, more_than_three],
+                        backgroundColor: [
+                            'rgba(38, 166, 91, 0.7)',
+                            'rgba(245, 229, 27, 0.7)',
+                            'rgba(242, 38, 19, 0.7)',
+                        ],
+                        borderColor: [
+                            'rgba(38, 166, 91, 1)',
+                            'rgba(245, 229, 27, 1)',
+                            'rgba(242, 38, 19, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return (Number(tooltipItem.yLabel) / total * 100).toFixed(2) + " %";
+                            }
+                        }
+                    },
+                    responsive: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1,
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'GERP Completion Velocity'
+                    }
+                }
+            });
+        });
+
+    $.get("../__va_sla_days/",
+        function (data, status) {
+            var three_day_count = 0;
+            var one_day_count = 0;
+            var more_than_three = 0;
+
+            for (var i = 0; i < data.length; i++) {
+                if (data[i] < 1.00) {
+                    one_day_count++;
+                } else if (data[i] < 3.00) {
+                    three_day_count++;
+                } else
+                    more_than_three++;
+            }
+            var total = one_day_count + three_day_count + more_than_three;
+
+            var ctx = document.getElementById("va-pending-chart");
+            var ticket_age_chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["1 Day", "2-3 Days", "3+ Days",],
+                    datasets: [{
+                        label: '',
+                        data: [one_day_count, three_day_count, more_than_three],
+                        backgroundColor: [
+                            'rgba(38, 166, 91, 0.7)',
+                            'rgba(245, 229, 27, 0.7)',
+                            'rgba(242, 38, 19, 0.7)',
+                        ],
+                        borderColor: [
+                            'rgba(38, 166, 91, 1)',
+                            'rgba(245, 229, 27, 1)',
+                            'rgba(242, 38, 19, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return (Number(tooltipItem.yLabel) / total * 100).toFixed(2) + " %";
+                            }
+                        }
+                    },
+                    responsive: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'VA Code Completion Velocity'
+                    }
+                }
+            });
+        });
+
+    $.get("../__bscode_sla_days/",
+        function (data, status) {
+            var three_day_count = 0;
+            var one_day_count = 0;
+            var more_than_three = 0;
+
+            for (var i = 0; i < data.length; i++) {
+                if (data[i] < 1.00) {
+                    one_day_count++;
+                } else if (data[i] < 3.00) {
+                    three_day_count++;
+                } else
+                    more_than_three++;
+            }
+            var total = one_day_count + three_day_count + more_than_three;
+
+            var ctx = document.getElementById("bscode-pending-chart");
+            var ticket_age_chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["1 Day", "2-3 Days", "3+ Days",],
+                    datasets: [{
+                        label: '',
+                        data: [one_day_count, three_day_count, more_than_three],
+                        backgroundColor: [
+                            'rgba(38, 166, 91, 0.7)',
+                            'rgba(245, 229, 27, 0.7)',
+                            'rgba(242, 38, 19, 0.7)',
+                        ],
+                        borderColor: [
+                            'rgba(38, 166, 91, 1)',
+                            'rgba(245, 229, 27, 1)',
+                            'rgba(242, 38, 19, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return (Number(tooltipItem.yLabel) / total * 100).toFixed(2) + " %";
+                            }
+                        }
+                    },
+                    responsive: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'BS Code Completion Velocity'
+                    }
+                }
+            });
+        });
+
+    $.get("../__lerp_sla_days/",
+        function (data, status) {
+            var three_day_count = 0;
+            var one_day_count = 0;
+            var more_than_three = 0;
+
+            for (var i = 0; i < data.length; i++) {
+                if (data[i] < 1.00) {
+                    one_day_count++;
+                } else if (data[i] < 3.00) {
+                    three_day_count++;
+                } else
+                    more_than_three++;
+            }
+            var total = one_day_count + three_day_count + more_than_three;
+
+            var ctx = document.getElementById("lerp-pending-chart");
+            var ticket_age_chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["1 Day", "2-3 Days", "3+ Days",],
+                    datasets: [{
+                        label: '',
+                        data: [one_day_count, three_day_count, more_than_three],
+                        backgroundColor: [
+                            'rgba(38, 166, 91, 0.7)',
+                            'rgba(245, 229, 27, 0.7)',
+                            'rgba(242, 38, 19, 0.7)',
+                        ],
+                        borderColor: [
+                            'rgba(38, 166, 91, 1)',
+                            'rgba(245, 229, 27, 1)',
+                            'rgba(242, 38, 19, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return (Number(tooltipItem.yLabel) / total * 100).toFixed(2) + " %";
+                            }
+                        }
+                    },
+                    responsive: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'LERP Completion Velocity'
+                    }
+                }
+            });
+        });
+
+</script>

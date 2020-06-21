@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/popper.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/font-awesome.min.css' %}">
+
+
+    <link rel="stylesheet" href="{% static '/css/jquery.dataTables.min.css' %}">
+    <script src="{% static '/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static '/js/dataTables.bootstrap4.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/responsive.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.responsive.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static '/css/buttons.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static '/css/searchPanes.bootstrap4.min.css' %}">
+    <script src="{% static '/js/dataTables.searchPanes.min.js' %}"></script>
+
+    <script src="{% static '/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static '/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static '/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static '/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static '/js/jszip.min.js' %}"></script>
+    <script src="{% static '/js/vfs_fonts.js' %}"></script>
+    <script src="{% static '/js/a076d05399.js' %}"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}"/>
+
+
+    <link rel="stylesheet" href="{% static '/css/free.min.css' %}">
+
+    <style>
+        /* .active {
+            color: red !important;
+        } */
+
+        .btn-circle.btn-xl {
+            width: 120px;
+            height: 70px;
+            margin: 10px;
+            padding: 10px 16px;
+            border-radius: 35px;
+            font-size: 24px;
+            line-height: 1.33;
+        }
+
+        html {
+            font-size: 0.8rem;
+        }
+
+        @include media-breakpoint-up(sm) {
+            html {
+                font-size: 1.2rem;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            html {
+                font-size: 1.4rem;
+            }
+        }
+
+        @include media-breakpoint-up(lg) {
+            html {
+                font-size: 1.6rem;
+            }
+        }
+
+        @font-face {
+            font-family: telenor;
+            src: url("{% static '/fonts/Telenor-Regular.otf' %}");
+        }
+
+        body {
+            font-family: telenor;
+        }
+    </style>
+
+
+
+    <title>O2C Panel</title>
+</head>
+
+<body>
+    <!-- Useful Information -->
+    <label id="username" hidden>{{ user.username }}</label>
+    <label id="workflow_id" hidden>{{ workflow_id }}</label>
+    <label id="previous_stage" hidden>{{ current_stage }}</label>
+    <label id="role" hidden>{{ user.role }}</label>
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <a class="navbar-brand" href="../dashboard/"><img src="{% static '/images/white-telenor.png' %}" width="25px" class="mr-3">Workflow<sup class="font-weight-light">Lite</sup></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="">Dashboard <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="#">Onboarding</a>
+                <a class="nav-item nav-link" href="#">Product Requisition</a>
+                <a class="nav-item nav-link" href="../tickets/">Onboarding Tickets</a>
+                <a class="nav-item nav-link" href="../requisition_tickets/">Requisition Tickets</a>
+            </div>
+
+            <div class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.username }} &#9679; {{ user.role }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right text-left" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Something</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="../logout/">Logout</a>
+                    </div>
+                </li>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="container mt-5 text-align-center">
+        <table id="o2c_table" class="table table-bordered">
+            <thead>
+                <th>Task</th>
+                <th>Role</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </thead>
+
+
+        </table>
+
+        
+
+        <button type="submit" id="submit_button" class="btn btn-success" data-toggle="modal"
+            data-target="#submit_modal">Update
+            Request</button>
+        <!-- Submit Modal -->
+        <div class="modal fade" id="submit_modal" tabindex="-1" role="dialog" aria-labelledby="submit_modal_label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="submit_modal_label">Are you sure you want to submit?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea placeholder="Add an optional remark" id="submit_remark" class="form-control"
+                            style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button onclick="fireNext(this.name)" name="Default" id="fire_submit_button" type="submit"
+                            class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-5 text-align-center h6">
+            <h1 class="mt-3">KAM Information</h1>
+            <hr>
+            <label>KAM ID: {{ product.kam_id }}</label><br>
+            <label>KAM Name: {{ product.kam_name }}</label><br>
+            <label>KAM Mobile: {{ product.kam_mobile }}</label><br>
+            <label>KAM Location: {{ product.kam_location }}</label><br>
+            <label>KAM Department: {{ product.kam_department }}</label><br>
+            <label>BS Code: {{ product.bs_code }}</label><br>
+            <label>Sub-segment: {{ product.sub_segment }}</label><br>
+            <label>Zone: {{ product.zone }}</label><br>
+    
+            <h1 class="mt-3">Product Information</h1>
+            <hr>
+            <label>Product Name: {{ product.product_name }}</label><br>
+            <label>ERP Code: {{ product.erp_code }}</label><br>
+            <label>Quantity: {{ product.quantity }}</label><br>
+            <label>Unit Price: {{ product.unit_price }}</label><br>
+            <label>Total Price: {{ product.total_price }}</label><br>
+    
+            <h1 class="mt-3">Client Contact Person</h1>
+            <hr>
+            <label>Client Contact Person: {{ product.client_contact_person }}</label><br>
+            <label>Client Mobile Number: {{ product.client_mobile_number }}</label><br>
+            <label>Product Delivery Address: {{ product.product_delivery_address }}</label><br>
+    
+            <h1 class="mt-3">Authorized Person Information</h1>
+            <hr>
+            <label>Authorized Person Name: {{ product.authorized_person_name }}</label><br>
+            <label>Authorized Person Contact No.: {{ product.authorized_person_contact_no }}</label><br>
+            <label>Authorized Person E-mail: {{ product.authorized_person_email }}</label><br>
+            <label>Authorized Person Designation: {{ product.authorized_person_designation }}</label><br>
+            <label>Authorized Person NID Number: {{ product.authorized_person_nid_number }}</label><br>
+            <label>Remarks: {{ product.remarks }}</label><br>
+    
+            <h1 class="mt-3">BSM Person Information</h1>
+            <hr>
+            <label>BSM Authorized Person Name: {{ product.bsm_authorized_person_name }}</label><br>
+            <label>BSM Authorized Person NID Number: {{ product.bsm_authorized_person_nid_number }}</label><br>
+    
+            <h1 class="mt-3">BDE Information</h1>
+            <hr>
+            <label>BDE Name: {{ product.bde_name }}</label><br>
+            <label>BDE POS Code: {{ product.bde_pos_code }}</label><br>
+            
+            <h1 class="mt-3">BTRC Information
+                
+            </h1>
+            <hr>
+            <label>BTRC Approval Type: {{ product.btrc_approval_type }}</label><br>
+            <label>BTRC Approval Option: {{ product.btrc_approval_option }}</label><br>
+            <label>BTRC Approval Taken: {{ product.btrc_approval_taken_option }}</label><br>
+        </div>
+
+
+    </div>
+
+    </div>
+
+    <div class="container">
+        <br>
+
+
+</body>
+
+
+</html>
+
+<script>
+
+    $(document).ready(function () {
+
+        stages = [
+            'Product Requisition by KAM',
+            'Product Allocation Processing',
+            'Request to submit Hard Copy Docs for BTRC Approval',
+            'BTRC Rejected & Request for Resubmission',
+            'Request for the submission of BTRC Approval',
+            'Submitted to BTRC for Approval',
+            'BTRC Approval Done & Request for Product Delivery: Sales Order, MR',
+            'Product Delivered & Request for Biometric and Activation',
+            'Activation Request Received & Processing',
+            'Request to SD Team for Activation',
+            'Activation Completed',
+        ];
+
+        roles = [
+            'KAM',
+            'COPC',
+            'KAM',
+            'KAM',
+            'BTRC',
+            'BTRC',
+            'KAM',
+            'COPC',
+            'KAM',
+            'COPC',
+            'SD',
+            'COPC',
+        ];
+
+        var role = $('#role').text();
+        console.log("Role: " + role);
+        for (var i = 0; i < stages.length; i++) {
+            var table = document.getElementsByTagName('table')[0];
+            var disabled = "";
+            if (role == "KAM") {
+                if (roles[i] != "KAM") {
+                    disabled = "disabled";
+                }
+                else
+                    disabled = "";
+            }
+            var row = `
+            <tr>
+                <td>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="o2c_stage"
+                                value="${stages[i]}" ${disabled}>${stages[i]}
+                        </label>
+                    </div>
+                </td>
+                <td>
+                    ${roles[i]}
+                </td>
+                <td>
+                    <span id="${stages[i].split(" ").join("").replace(/[^\w\s]|_/g, "")}_start"></span>
+                </td>
+                <td>
+                    <span id="${stages[i].split(" ").join("").replace(/[^\w\s]|_/g, "")}_end"></span>
+                </td>
+            </tr>
+            `
+            table.innerHTML += row;
+        }
+    });
+    $.get("../__get_sla/",
+        {
+            wfid: $('#workflow_id').text(),
+        },
+        function (data, boom) {
+            console.log("Data: " + data);
+            console.log(data.length);
+            for (var i = 0; i < data.length; i++) {
+                console.log(data[i].task.split(" ").join(""));
+                console.log(data[i].fire_time);
+                console.log(data[i].completion_time);
+                $('#' + data[i].task.split(" ").join("").replace(/[^\w\s]|_/g, "") + '_start').text(data[i].fire_time);
+                $('#' + data[i].task.split(" ").join("").replace(/[^\w\s]|_/g, "") + '_end').text(data[i].completion_time);
+                console.log($('#' + data[i].task.split(" ").join("").replace(/[^\w\s]|_/g, "") + '_end').text());
+            }
+        }
+    );
+
+    function fireNext(wfid) {
+        wfid = $('#workflow_id').text();
+        console.log(wfid);
+        console.log($('#submit_remark').val());
+        console.log($('input[name=o2c_stage]:checked').val());
+        var role = $('.role').text();
+        console.log("firing requisition");
+        $.get("../__fire_next_requisition/",
+            {
+                wfid: wfid,
+                submit_remark: $('#submit_remark').val(),
+                role: role,
+                previous_stage: $('#previous_stage').text(),
+                next_stage: $('input[name=o2c_stage]:checked').val(),
+            },
+            function (data, status) {
+                console.log("Data: " + data);
+                ans = data;
+            });
+        // $('#onboarding_form').submit();
+        window.location.replace("../dashboard")
+    }
+    $(function () {
+        var $radios = $('input:radio[name=o2c_stage]');
+        if ($radios.is(':checked') === false) {
+            $radios.filter('[value="' + $('#previous_stage').text() + '"]').prop('checked', true);
+        }
+    });
+
+    $(function () {
+
+        if ($('#previous_stage').text() == "Completed") {
+
+            $('#submit_button').hide();
+            console.log("Here");
+            var radios = $('input:radio[name=o2c_stage]');
+            console.log(typeof (radios));
+            console.log(radios.length);
+            for (var i = 0; i < radios.length; i++) {
+                console.log(typeof (radios[i]));
+                radios[i].setAttribute("disabled", true);
+            }
+        }
+    })
+
+
+</script>
