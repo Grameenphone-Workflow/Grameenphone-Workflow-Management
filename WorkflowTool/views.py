@@ -47,7 +47,8 @@ def clc_form(request):
 def o2c_panel(request):
     return render(request, 'o2c_panel.html')
 
-
+def landing_page(request):
+    return render(request, 'landing_page.html')
 
 def download_file(request, path):
     print(path)
