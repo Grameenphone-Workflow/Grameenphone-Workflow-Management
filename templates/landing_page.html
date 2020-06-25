@@ -19,18 +19,16 @@
 	<script src="{% static '/js/popper.min.js' %}"></script>
 	<script src="{% static '/js/bootstrap.min.js' %}"></script>
 	<link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" />
+
+	<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+	<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
 	<style>
 		.navbar-nav {
 			float: none;
 			margin: 0 auto;
 			display: block;
 			text-align: center;
-		}
-
-		.jumbotron {
-			background-image: url("{% static '/images/login-full.jpg' %}");
-			background-size: cover;
-			background-repeat: no-repeat;
 		}
 
 		.navbar-nav>li {
@@ -57,18 +55,16 @@
 
 	<!-- Header -->
 	<header id="header">
-		<div class="content">
+		<div class="content text-center">
 			<h1>Grameenphone<br>Workflow Management</h1>
-			<p>Workflow management, visibility and<br>monitoring solution from the Business Division.</p>
-			<ul class="actions">
-				<li><a href="{% url 'login' %}" class="button primary icon solid fa-download">Login</a></li>
-				<li><a href="#" class="button primary icon solid fa-download">Android</a></li>
+			<p>is a suite of tools for workflow management, <br> visibility and monitoring from the Business Division.</p>
+			<ul class="actions mr-5">
+				<li><a href="{% url 'login' %}" class="button primary icon solid fa-sign-in-alt">Login</a></li>
+				<li><a href="#" class="button primary icon solid fa-mobile-alt">Android App</a></li>
 				<li><a href="#one" class="button icon solid fa-chevron-down scrolly">Learn More</a></li>
 			</ul>
 		</div>
-		<div class="image phone">
-			<div class="inner"><img src="{% static 'landing_page/images/screen.jpg' %}" alt="" /></div>
-		</div>
+		<div class="col-md-4"><img src="{% static 'images/right-panel.svg' %}" alt="" /></div>
 	</header>
 
 	<!-- One -->
@@ -87,7 +83,7 @@
 	<!-- Two -->
 	<section id="two" class="wrapper">
 		<div class="inner alt">
-			<section class="spotlight">
+			<section class="spotlight" data-aos="fade-right">
 				<div class="image"><img src="{% static 'landing_page/images/pic01.jpg' %}" alt="" /></div>
 				<div class="content">
 					<h3>Customer Onboarding</h3>
@@ -96,7 +92,7 @@
 						consequat lorem ipsum.</p>
 				</div>
 			</section>
-			<section class="spotlight">
+			<section class="spotlight" data-aos="fade-left">
 				<div class="image"><img src="{% static 'landing_page/images/pic02.jpg' %}" alt="" /></div>
 				<div class="content">
 					<h3>Product Requisition</h3>
@@ -105,7 +101,7 @@
 						consequat lorem ipsum.</p>
 				</div>
 			</section>
-			<section class="spotlight">
+			<section class="spotlight" data-aos="fade-right">
 				<div class="image"><img src="{% static 'landing_page/images/pic03.jpg' %}" alt="" /></div>
 				<div class="content">
 					<h3>Visit Tracking</h3>
@@ -114,9 +110,46 @@
 						consequat lorem ipsum.</p>
 				</div>
 			</section>
-			<section class="special">
+			<section class="spotlight" data-aos="fade-left">
+				<div class="image"><img src="{% static 'landing_page/images/pic01.jpg' %}" alt="" /></div>
+				<div class="content">
+					<h3>SLA Monitoring and Visualization</h3>
+					<p>Morbi mattis ornare ornare. Duis quam turpis, gravida at leo elementum elit fusce accumsan dui
+						libero, quis vehicula lectus ultricies eu. In convallis amet leo non sapien iaculis efficitur
+						consequat lorem ipsum.</p>
+				</div>
+			</section>
+			<section class="spotlight" data-aos="fade-right">
+				<div class="image"><img src="{% static 'landing_page/images/pic01.jpg' %}" alt="" /></div>
+				<div class="content">
+					<h3>Generate Monthly Visit Reports</h3>
+					<p>Morbi mattis ornare ornare. Duis quam turpis, gravida at leo elementum elit fusce accumsan dui
+						libero, quis vehicula lectus ultricies eu. In convallis amet leo non sapien iaculis efficitur
+						consequat lorem ipsum.</p>
+				</div>
+			</section>
+			<section class="spotlight" data-aos="fade-left">
+				<div class="image"><img src="{% static 'landing_page/images/pic01.jpg' %}" alt="" /></div>
+				<div class="content">
+					<h3>Track Customer Visits</h3>
+					<p>Morbi mattis ornare ornare. Duis quam turpis, gravida at leo elementum elit fusce accumsan dui
+						libero, quis vehicula lectus ultricies eu. In convallis amet leo non sapien iaculis efficitur
+						consequat lorem ipsum.</p>
+				</div>
+			</section>
+			<section class="spotlight" data-aos="fade-right">
+				<div class="image"><img src="{% static 'landing_page/images/pic01.jpg' %}" alt="" /></div>
+				<div class="content">
+					<h3>Automated E-mails and Notifications</h3>
+					<p>Morbi mattis ornare ornare. Duis quam turpis, gravida at leo elementum elit fusce accumsan dui
+						libero, quis vehicula lectus ultricies eu. In convallis amet leo non sapien iaculis efficitur
+						consequat lorem ipsum.</p>
+				</div>
+			</section>
+			<section class="special" data-aos="zoom-in">
 				<ul class="icons labeled">
 					<li><span class="icon solid fa-camera-retro"><span class="label">Visibility</span></span></li>
+					<li><span class="icon solid fa-camera-retro"><span class="label">Business Process Automation</span></span></li>
 					<li><span class="icon solid fa-sync"><span class="label">Simple Report Downloads</span></span></li>
 					<li><span class="icon solid fa-cloud"><span class="label">Ticketing System</span></span></li>
 					<li><span class="icon solid fa-code"><span class="label">Multi-User Levels</span></span></li>
@@ -127,7 +160,7 @@
 	</section>
 
 	<!-- Three -->
-	<section id="three" class="wrapper style2 special">
+	<section id="three" class="wrapper style2 special" data-aos="fade-up">
 		<header class="major">
 			<h2>Magna leo sapien gravida</h2>
 			<p>Gravida at leo elementum elit fusce accumsan dui libero, quis vehicula<br />
@@ -135,7 +168,6 @@
 		</header>
 		<ul class="actions special">
 			<li><a href="#" class="button primary icon solid fa-download">Download</a></li>
-			<li><a href="#" class="button">Learn More</a></li>
 		</ul>
 	</section>
 
@@ -161,6 +193,7 @@
 
 	<script>
 		$(document).ready(function () {
+			AOS.init();
 			var nav = $('#nav');
 			nav.hide();
 
