@@ -50,6 +50,10 @@
 </head>
 
 <body class="is-preload">
+	<nav id="nav" class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+		<div class="navbar-brand mx-auto" href="#"><img src="{% static '/images/white-telenor.png' %}" width="25px"
+				class="mr-3">Welcome to Grameenphone-Workflow-Management</div>
+	</nav>
 
 	<!-- Header -->
 	<header id="header">
@@ -139,9 +143,12 @@
 
 	<!-- Footer -->
 	<footer id="footer">
-		<a href="https://github.com/Saqibur/Grameenphone-Workflow-Management" class="btn btn-secondary mb-3"><span class="icon brands fa-github mr-2"></span>Grameenphone-Workflow-Management</span></a>
-		<a href="https://github.com/Saqibur/Visit-Tracker-Flutter-App" class="btn btn-secondary mb-3"><span class="icon brands fa-github mr-2"></span>Visit-Tracker-Flutter-App</span></a>
+		<a href="https://github.com/Saqibur/Grameenphone-Workflow-Management" class="btn btn-secondary mb-3"><span
+				class="icon brands fa-github mr-2"></span>Grameenphone-Workflow-Management</span></a>
+		<a href="https://github.com/Saqibur/Visit-Tracker-Flutter-App" class="btn btn-secondary mb-3"><span
+				class="icon brands fa-github mr-2"></span>Visit-Tracker-Flutter-App</span></a>
 		<p class="copyright">Developed by <a href="https://saqiburrahman.com">Saqibur Rahman</a></p>
+		<p class="copyright">&copy; {% now "Y" %}</p>
 	</footer>
 
 	<!-- Scripts -->
@@ -151,6 +158,26 @@
 	<script src="{% static 'landing_page/assets/js/breakpoints.min.js' %}"></script>
 	<script src="{% static 'landing_page/assets/js/util.js' %}"></script>
 	<script src="{% static 'landing_page/assets/js/main.js' %}"></script>
+
+	<script>
+		$(document).ready(function () {
+			var nav = $('#nav');
+			nav.hide();
+
+			// fade in .navbar
+			$(function () {
+				$(window).scroll(function () {
+					// set distance user needs to scroll before we start fadeIn
+					if ($(this).scrollTop() > 200) { //For dynamic effect use $nav.height() instead of '100'
+						nav.fadeIn();
+					} else {
+						nav.fadeOut();
+					}
+				});
+			});
+
+		});
+	</script>
 
 </body>
 
