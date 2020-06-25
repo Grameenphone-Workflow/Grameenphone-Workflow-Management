@@ -5,6 +5,12 @@ data/product
 data/visit_images
 data/visiting_excels
 
+Need to recreate the following files:
+.mailserver E-mail server.
+.me -> E-mail sender address.
+.password -> E-mail sender password.
+.receivers -> E-mail reciever.
+.secret -> The Django Secret.
 
 Parent Projects:
 https://github.com/Saqibur/Workflow
