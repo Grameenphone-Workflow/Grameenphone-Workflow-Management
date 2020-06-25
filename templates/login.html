@@ -54,13 +54,13 @@
             <div class="card bg-white col-md-5 mt-5 shadow-lg rounded">
                 <div class="card-body">
                     <div class="pt-3 pb-3" align="center">
-                        <h1 class="text-center m-4 p-2">One Team, One Goal.</h1>
+                        <h2 class="text-center m-4 p-2">One Team, One Goal.</h2>
                         <form method="POST" action="{% url 'dashboard' %}">
                             {% csrf_token %}
                             <input type="text" name="phone_number" value="" placeholder="Username"
                                 class="form-control m-2 col-md-7">
                             <input type="password" name="password" value="" placeholder="Password"
-                                class="form-control mt-3 mb-3 col-md-7">
+                                class="form-control m-2 col-md-7">
                             <button name="login" class="btn btn-primary mb-3">Login</button>
                             <br>
                             <a href="../reset">Reset Password</a><br>
