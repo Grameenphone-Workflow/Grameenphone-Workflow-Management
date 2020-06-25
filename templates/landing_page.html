@@ -24,6 +24,16 @@
 	<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 	<style>
+		.app_icons {
+			width: 10.0em;
+			padding: 1.0em;
+			transition: transform .3s;
+		}
+		.app_icons:hover {
+			transform: scale(1.5);
+			
+		}
+
 		.navbar-nav {
 			float: none;
 			margin: 0 auto;
@@ -57,7 +67,8 @@
 	<header id="header">
 		<div class="content text-center">
 			<h1>Grameenphone<br>Workflow Management</h1>
-			<p>is a suite of tools for workflow management, <br> visibility and monitoring from the Business Division.</p>
+			<p>is a suite of tools for workflow management, <br> visibility and monitoring from the Business Division.
+			</p>
 			<ul class="actions mr-5">
 				<li><a href="{% url 'login' %}" class="button primary icon solid fa-sign-in-alt">Login</a></li>
 				<li><a href="#" class="button primary icon solid fa-mobile-alt">Android App</a></li>
@@ -74,9 +85,9 @@
 				visibility across managerial verticals</h2>
 		</header>
 		<ul class="icons major">
-			<li><span class="icon solid fa-camera-retro"><span class="label">Shoot</span></span></li>
-			<li><span class="icon solid fa-sync"><span class="label">Process</span></span></li>
-			<li><span class="icon solid fa-cloud"><span class="label">Upload</span></span></li>
+			<li><img class="app_icons" src="{% static 'images/visit-web.png' %}" alt=""></li>
+			<li><img class="app_icons" src="{% static 'images/workflow-lite.png' %}" alt=""></li>
+			<li><img class="app_icons" src="{% static 'images/visit-app.png' %}" alt=""></li>
 		</ul>
 	</section>
 
@@ -149,7 +160,8 @@
 			<section class="special" data-aos="zoom-in">
 				<ul class="icons labeled">
 					<li><span class="icon solid fa-camera-retro"><span class="label">Visibility</span></span></li>
-					<li><span class="icon solid fa-camera-retro"><span class="label">Business Process Automation</span></span></li>
+					<li><span class="icon solid fa-camera-retro"><span class="label">Business Process
+								Automation</span></span></li>
 					<li><span class="icon solid fa-sync"><span class="label">Simple Report Downloads</span></span></li>
 					<li><span class="icon solid fa-cloud"><span class="label">Ticketing System</span></span></li>
 					<li><span class="icon solid fa-code"><span class="label">Multi-User Levels</span></span></li>
@@ -175,10 +187,10 @@
 
 	<!-- Footer -->
 	<footer id="footer">
-		<a href="https://github.com/Saqibur/Grameenphone-Workflow-Management" class="btn btn-secondary mb-3"><span
-				class="icon brands fa-github mr-2"></span>Grameenphone-Workflow-Management</span></a>
-		<a href="https://github.com/Saqibur/Visit-Tracker-Flutter-App" class="btn btn-secondary mb-3"><span
-				class="icon brands fa-github mr-2"></span>Visit-Tracker-Flutter-App</span></a>
+		<a href="https://github.com/Saqibur/Grameenphone-Workflow-Management" class="text-white btn btn-secondary mb-3"><span
+				class="text-white icon brands fa-github mr-2"></span>Grameenphone-Workflow-Management</span></a>
+		<a href="https://github.com/Saqibur/Visit-Tracker-Flutter-App" class="text-white btn btn-secondary mb-3"><span
+				class="text-white icon brands fa-github mr-2"></span>Visit-Tracker-Flutter-App</span></a>
 		<p class="copyright">Developed by <a href="https://saqiburrahman.com">Saqibur Rahman</a></p>
 		<p class="copyright">&copy; {% now "Y" %}</p>
 	</footer>
