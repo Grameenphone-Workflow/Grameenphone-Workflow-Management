@@ -15,6 +15,8 @@ Need to recreate the following files:
 - .receivers -> E-mail reciever.
 - .secret -> The Django Secret.
 
+## Sub-Projects:
+
 <img width="150" src="./statics/images/workflow-lite.png"/>
 
 Parent Project:
