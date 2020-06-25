@@ -15,7 +15,7 @@ Need to recreate the following files:
 - .receivers -> E-mail reciever.
 - .secret -> The Django Secret.
 
-<img src="./statics/images/workflow-lite.png"/>
+<img style="width: 100px;" src="./statics/images/workflow-lite.png"/>
 
 Parent Project:
 - [Workflow](https://github.com/Saqibur/Workflow)
@@ -25,8 +25,8 @@ Parent Project:
 Related Projects:
 1. [Visit-Tracker-Flutter-App](https://github.com/Saqibur/Visit-Tracker-Flutter-App)
 
-<img src="./statics/images/visit-app.png"/>
+<img style="width: 100px;" src="./statics/images/visit-app.png"/>
 
 2. [Visit-Tracker-API](https://github.com/Saqibur/Visit-Tracker)
 
-<img src="./statics/images/visit-web.png"/>
+<img style="width: 100px;" src="./statics/images/visit-web.png"/>
