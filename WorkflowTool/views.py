@@ -332,7 +332,7 @@ def dashboard(request):
             'username': user.username,
             'user': user
         }
-        if user.role == "Superadmin":
+        if user.role == "Leader" or user.role == "Superadmin":
             return render(request, 'leaderdash.html', context)
         else:
             return render(request, 'dashboard.html', context)
