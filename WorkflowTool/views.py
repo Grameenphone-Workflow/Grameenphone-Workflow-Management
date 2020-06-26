@@ -310,7 +310,7 @@ def dashboard(request):
                         'user': user
                     }
                     print(user.username )
-                    if user.role == "Superadmin":
+                    if user.role == "Leader" or user.role == "Superadmin":
                         for key, value in request.session.items():
                             print('{} => {}'.format(key, value))
                         return render(request, 'leaderdash.html', context)
