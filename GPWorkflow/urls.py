@@ -42,6 +42,7 @@ urlpatterns = [
     path('send_code_email/', WorkflowTool.views.send_code_email, name='send_code_email'),
     # path('', RedirectView.as_view(url='login/'), name='login'),
     path('', WorkflowTool.views.landing_page, name='landing_page'),
+    path('credits', WorkflowTool.views.credits, name='credits'),
     path('logout/', WorkflowTool.views.logout, name='logout'),
     re_path(r'^download/(?P<path>.*)$', WorkflowTool.views.download_file),
     re_path(r'^download_zip/(?P<company_name>.*)$', WorkflowTool.views.download_zip),
