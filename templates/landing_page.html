@@ -12,7 +12,8 @@
 	<title>Workflow Management</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<meta name="keywords" content="grameenphone, workflow, Grameenphone Workflow Management, Visit Tracker, saqibur, Saqibur Rahman, management, workflow">
+	<meta name="keywords"
+		content="grameenphone, workflow, Grameenphone Workflow Management, Visit Tracker, saqibur, Saqibur Rahman, management, workflow">
 	<meta name="author" content="Saqibur Rahman">
 	<meta property="og:image" content="https://example.com/images/image.jpg">
 	<meta name="description"
@@ -20,7 +21,8 @@
 
 	<meta property="og:title" content="Graeenphone Worklfow Management">
 	<meta property="og:image" content="{% static 'images/workflow-lite.png' %}">
-	<meta property="og:description" content="Grameenphone Workflow Management is a suite of tools for workflow management, visibility and monitoring from the Business Division.">
+	<meta property="og:description"
+		content="Grameenphone Workflow Management is a suite of tools for workflow management, visibility and monitoring from the Business Division.">
 	<meta property="og:url" content="https://wfm.grameenphone.com/">
 
 	<link rel="stylesheet" href="{% static '/landing_page/assets/css/main.css' %}" />
@@ -63,6 +65,20 @@
 		body {
 			font-family: telenor;
 		}
+
+		.short-text {
+			display: none;
+		}
+
+		@media (max-width: 768px) {
+			.short-text {
+				display: inline-block;
+			}
+
+			.full-text {
+				display: none;
+			}
+		}
 	</style>
 
 </head>
@@ -72,14 +88,15 @@
 	<nav id="nav" class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" hidden>
 		<div class="navbar-brand mx-auto">
 			<img src="{% static '/images/white-telenor.png' %}" width="25px" class="mr-3">
-			Welcome to Grameenphone-Workflow-Management
+			<span class="full-text">Welcome to Grameenphone-Workflow-Management</span>
+			<span class="short-text">Welcome to GWM</span>
 		</div>
 	</nav>
 
 	<!-- Header -->
 	<header id="header">
 		<div class="content text-center">
-			<h1>Grameenphone<br>Workflow Management</h1>
+			<h1>Grameenphone <br>Workflow Management</h1>
 			<p>is a suite of tools for workflow management, <br> visibility and monitoring from the Business Division.
 			</p>
 			<ul class="actions mr-5">
