@@ -44,6 +44,9 @@ def login(request):
 def clc_form(request):
     return render(request, 'clc_form.html')
 
+def credits(request):
+    return render(request, 'credits.html')
+
 def o2c_panel(request):
     return render(request, 'o2c_panel.html')
 
