@@ -137,16 +137,12 @@
         <div id="today_section" class="border p-4 mb-3 mt-3">
             <label for="">Pending Visits</label>
             <hr>
-            <div id="upcoming_visits" class="p-3">
-                <!-- Generate upcoming visits here -->
-            </div>
+            <div id="pending_visits" class="p-3"></div>
 
 
             <label class="mt-4" for="">Upcoming Visits</label>
             <hr>
-            <div id="pending_visits" class="p-3">
-                <!-- Generate pending visits here -->
-            </div>
+            <div id="upcoming_visits" class="p-3"></div>
         </div>
 
         <div clas="row">
@@ -555,28 +551,21 @@
     }
 
     function createAgenda(data) {
-        // // console.log("In Agenda: " + data);
-        // if (data.length > 0) {
-        //     document.getElementById('todays_agenda').innerHTML = "";
-        // }
         for (var i = 0; i < data.length; i++) {
-            // // console.log(data[i]);
             var date = new Date(data[i].start);
             // // // console.log(date.toLocaleDateString());
 
             var markup =
                 `
-            <div class=" mt-2 mb-2 rounded-sm p-4 border" style="border-style: dashed;">
-                <div class="row">
-                    <h3 class="col-md-7">${data[i].title} - ${new Date(data[i].start).toDateString()}</h3>
-                    
+                    <div class=" mt-2 mb-2 rounded-sm p-4 border" style="border-style: dashed;">
+                    <div class="row">
+                    <h3 class="col-md-7">${data[i].title} - ${new Date(data[i].start).toDateString()}</h3> 
                     <div class="ml-auto mr-auto">
                         <button id=${data[i].visiting_id} class="btn btn-success mb-3" onclick="setSelectedVisit(this.id)" data-toggle="modal" data-target="#complete_visit_modal">Complete</button>
                     </div>
-                    `;
+                `;
 
-            // // // console.log(new Date(data[i].start));
-            // // // console.log(new Date(new Date().setDate(new Date().getDate() - 1)));
+
             if (new Date(data[i].start) >= new Date(new Date().setDate(new Date().getDate() - 2))) {
                 markup += `
                         <div class="ml-auto mr-auto">
@@ -596,9 +585,9 @@
             `;
 
             if (new Date(data[i].start) > new Date()) {
-                document.getElementById('pending_visits').innerHTML += markup;
-            } else {
                 document.getElementById('upcoming_visits').innerHTML += markup;
+            } else {
+                document.getElementById('pending_visits').innerHTML += markup;
             }
         }
 
