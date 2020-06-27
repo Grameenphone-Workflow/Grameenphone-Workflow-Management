@@ -130,7 +130,6 @@ def download_full_excel(request):
     response['Content-Disposition'] = 'attachment; filename="{0}_{1}.xlsx"'.format( datetime.now().strftime("%B"), datetime.now().year)
     return response
 
-
 def __get_companies_for_kam(request):
     # kam_id = request.GET.get('kam_id')
     # companies = list(Onboarding.objects.values())
