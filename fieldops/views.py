@@ -136,7 +136,7 @@ def __get_companies_for_kam(request):
     # print(companies)
     # return JsonResponse(companies, safe=False)
 
-    qs = Onboarding.objects.filter(kam_name=request.GET.get('kam_id'))
+    qs = Onboarding.objects.filter(kam_id=request.GET.get('kam_id'))
     data = []
     for onboarding in qs:
         data.append({
