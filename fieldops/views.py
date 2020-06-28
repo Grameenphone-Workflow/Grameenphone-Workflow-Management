@@ -30,7 +30,7 @@ def download_excel(request, kam_id):
     workbook = xlsxwriter.Workbook('data/visiting_excels/{0}_{1}_{2}.xlsx'.format(kam_id, datetime.now().strftime("%B"), datetime.now().year))
     worksheet = workbook.add_worksheet()
 
-    companies = Onboarding.objects.filter(kam_name=kam_id)
+    companies = Onboarding.objects.filter(kam_id=kam_id)
     data = []
     for company in companies:
         completed_visit_count = len(list(Visit.objects.filter(kam_id=kam_id, company_name=company.corporate_name, visited=True)))
@@ -305,7 +305,7 @@ def generate_body_markup(visit):
     return markup
     
 def __get_current_month_visits(request):
-    companies = Onboarding.objects.filter(kam_name=request.GET.get('kam_id'))
+    companies = Onboarding.objects.filter(kam_id=request.GET.get('kam_id'))
     data = []
     for company in companies:
         completed_visit_count = len(list(Visit.objects.filter(kam_id=request.GET.get('kam_id'), company_name=company.corporate_name, visited=True, date_of_visit__month__gte=datetime.now().month)))
