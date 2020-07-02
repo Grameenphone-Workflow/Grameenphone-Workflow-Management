@@ -318,7 +318,9 @@ def dashboard(request):
                             print('{} => {}'.format(key, value))
                         return render(request, 'leaderdash.html', context)
                     else:
-                        return render(request, 'dashboard.html', context)
+                        ### THIS ONLY REDIRECTS THE USER TO VISIT INSTEAD OF DASHBOARD ###
+                        # return render(request, 'dashboard.html', context)
+                        return redirect('../visit/visiting_home')
                 else:
                     return redirect('login')
             else:
