@@ -652,6 +652,21 @@
         // // console.log(kam_id);
         $('#create_new_vis_btn').show();
 
+        $.get("../__get_companies_for_kam",
+            {
+                kam_id: $('#username').text()
+            },
+            function (data, status) {
+                // // console.log("This is what I found: " + typeof (data));
+                // for (var key in data) {
+                //     var value = data[key];
+                    
+                //     // // console.log(value);
+                // }
+                // // console.log(status);
+                generateOnboardingSelections(data);
+            });
+
         $.get("../__get_visits_for_kam",
             {
                 kam_id: kam_id
