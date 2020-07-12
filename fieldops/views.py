@@ -32,6 +32,7 @@ def download_excel(request, kam_id):
 
     companies = Onboarding.objects.filter(kam_id=kam_id)
     data = []
+    
     for company in companies:
         completed_visit_count = len(list(Visit.objects.filter(kam_id=kam_id, company_name=company.corporate_name, visited=True)))
         planned_visit_count = len(list(Visit.objects.filter(kam_id=kam_id, company_name=company.corporate_name, visited=False)))

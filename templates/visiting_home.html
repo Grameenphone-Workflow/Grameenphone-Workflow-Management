@@ -147,8 +147,10 @@
 
         <div clas="row">
             <h2 class="mb-4 mt-4">Your Calendar</h2>
-            <button id="create_new_vis_btn" class="btn btn-success" data-toggle="modal"
+            <button id="create_new_vis_btn" class="btn btn-success ml-3 mb-3" data-toggle="modal"
                 data-target="#submit_modal">Create New Visit</button>
+            <a id="download_kam_excel_btn" href="../download_excel/{{ user.username }}" class="btn btn-info ml-3 mb-3"
+                target="__blank">Download Visting Excel</a>
         </div>
         <div id="today_section" class="border p-4 mb-3 mt-3">
             <div class="float-right row">
@@ -354,7 +356,6 @@
     $(document).ready(function () {
 
         $('#company_name_textbox').hide();
-
         if ($('#role').text() == "Leader") {
             // // console.log("This user is a leader.");
             $('#today_section').hide();
@@ -733,7 +734,7 @@
         $('#download_excel_btn').attr('href', '../download_excel/' + $('#username').text());
         // // console.log($('#download_excel_btn').attr('href'));
     }
-
+    
     function toggleCompany() {
         $("#company_name").val('default').trigger('change');
         $('#company_name_textbox').val("");
