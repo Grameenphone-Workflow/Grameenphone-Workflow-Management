@@ -83,14 +83,13 @@ def download_full_excel(request):
     worksheet = workbook.add_worksheet()
 
     visits = Visit.objects.filter(date_of_visit__month__gte=datetime.now().month)
-
     
     data = []
     for visit in visits:
         data.append({
             'kam_id': visit.kam_id,
-            'kam_name': "TODO",
-            'segment': "TODO",
+            'kam_name': KAMTable.objects.filter(mobile_number=visit.kam_id).first().employee_name if KAMTable.objects.filter(mobile_number=visit.kam_id).first() else "N/A",
+            'segment': GPUser.objects.filter(phone_number=visit.kam_id).first().segment if GPUser.objects.filter(phone_number=visit.kam_id).first() else "N/A",
             'company_name': visit.company_name,
             'date': visit.date_of_visit.strftime('%d-%m-%Y'),
             'purpose': visit.visit_type,
@@ -99,6 +98,60 @@ def download_full_excel(request):
             'visit_start_remark': visit.visit_start_remark,
             'visit_close_remark': visit.visit_close_remark,
         })
+
+    my_list = data
+
+    worksheet.write(0, 0, 'KAM Name')
+    worksheet.write(0, 1, 'KAM ID')
+    worksheet.write(0, 2, 'Segment')
+    worksheet.write(0, 3, 'Company')
+    worksheet.write(0, 4, 'Visit Date')
+    worksheet.write(0, 5, 'Status')
+    worksheet.write(0, 6, 'Purpose')
+    worksheet.write(0, 7, 'Feedback')
+    worksheet.write(0, 8, 'Initial Remark')
+    worksheet.write(0, 9, 'Closing Remark')
+
+    for row_num, data in enumerate(my_list):
+        worksheet.write(row_num + 1, 0, data['kam_name'])
+        worksheet.write(row_num + 1, 1, data['kam_id'])
+        worksheet.write(row_num + 1, 2, data['segment'])
+        worksheet.write(row_num + 1, 3, data['company_name'])
+        worksheet.write(row_num + 1, 4, data['date'])
+        worksheet.write(row_num + 1, 5, data['visited'])
+        worksheet.write(row_num + 1, 6, data['purpose'])
+        worksheet.write(row_num + 1, 7, data['post_visit_feedback'])
+        worksheet.write(row_num + 1, 8, data['visit_start_remark'])
+        worksheet.write(row_num + 1, 9, data['visit_close_remark'])
+    
+    workbook.close()
+
+    response = HttpResponse(open('data/visiting_excels/{0}_{1}.xlsx'.format(datetime.now().strftime("%B"), datetime.now().year), 'rb'), content_type='vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="{0}_{1}.xlsx"'.format( datetime.now().strftime("%B"), datetime.now().year)
+    return response
+
+def download_manager_excel(request):
+    workbook = xlsxwriter.Workbook('data/visiting_excels/{0}_{1}.xlsx'.format(datetime.now().strftime("%B"), datetime.now().year))
+    worksheet = workbook.add_worksheet()
+
+    visits = Visit.objects.filter(date_of_visit__month__gte=datetime.now().month)
+    kams = KAMTable.objects.filter(manager=request.session['user_phone_number'])
+    kams = [ kam.username for kam in kams ]
+    data = []
+    for visit in visits:
+        if visit.kam_id in kams:
+            data.append({
+                'kam_id': visit.kam_id,
+                'kam_name': KAMTable.objects.filter(mobile_number=visit.kam_id).first().employee_name if KAMTable.objects.filter(mobile_number=visit.kam_id).first() else "N/A",
+                'segment': GPUser.objects.filter(phone_number=visit.kam_id).first().segment if GPUser.objects.filter(phone_number=visit.kam_id).first() else "N/A",
+                'company_name': visit.company_name,
+                'date': visit.date_of_visit.strftime('%d-%m-%Y'),
+                'purpose': visit.visit_type,
+                'visited': "Completed" if visit.visited else "Planned",
+                'post_visit_feedback': visit.status,
+                'visit_start_remark': visit.visit_start_remark,
+                'visit_close_remark': visit.visit_close_remark,
+            })
 
     my_list = data
 
