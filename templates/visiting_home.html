@@ -559,7 +559,6 @@
         for (var i = 0; i < data.length; i++) {
             var date = new Date(data[i].start);
             // // // console.log(date.toLocaleDateString());
-
             var markup =
                 `
                     <div class=" mt-2 mb-2 rounded-sm p-4 border" style="border-style: dashed;">
@@ -586,8 +585,16 @@
                 </div>
                 <h5>${data[i].purpose}</h5>
                 <em>${data[i].remarks}</em>
-            </div>
+            
             `;
+
+            if (data[i].color == "purple") {
+                markup += `
+                    <hr>
+                    <b><em style="color: purple">*This has been assigned by your manager<em></b>
+                    </div>
+                `;
+            }
 
             if (new Date(data[i].start) > new Date()) {
                 document.getElementById('upcoming_visits').innerHTML += markup;
