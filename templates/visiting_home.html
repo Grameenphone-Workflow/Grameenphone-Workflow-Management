@@ -123,7 +123,7 @@
 
     <div class="container">
         <label class="role">{{ role }}</label>
-        <h2 class="mb-4 mt-4">Visiting</h2>
+        <h2 class="mb-4 mt-4"><i class="fas fa-calendar-day mr-3 text-info"></i>Visiting</h2>
         <div id="leader_options" hidden>
             <a id="download_excel_btn" href="../download_full_excel/" class="btn btn-info ml-3 mb-3" href="#"
                 target="__blank">Download Visting Excel</a>
@@ -135,22 +135,22 @@
 
         </div>
         <div id="today_section" class="border p-4 mb-3 mt-3">
-            <label for="">Pending Visits</label>
+            <label for=""><i class="fas fa-clock mr-3 text-warning"></i>Pending Visits</label>
             <hr>
             <div id="pending_visits" class="p-3"></div>
 
 
-            <label class="mt-4" for="">Upcoming Visits</label>
+            <label class="mt-4" for=""><i class="far fa-clock mr-3 text-info"></i>Upcoming Visits</label>
             <hr>
             <div id="upcoming_visits" class="p-3"></div>
         </div>
 
         <div clas="row">
-            <h2 class="mb-4 mt-4">Your Calendar</h2>
+            <h2 class="mb-4 mt-4"><i class="fas fa-calendar-alt mr-3"></i>Your Calendar</h2>
             <button id="create_new_vis_btn" class="btn btn-success ml-3 mb-3" data-toggle="modal"
                 data-target="#submit_modal">Create New Visit</button>
-            <a id="download_kam_excel_btn" href="../download_excel/{{ user.username }}" class="btn btn-info ml-3 mb-3"
-                target="__blank">Download Visting Excel</a>
+            <a id="download_kam_excel_btn" href="../download_excel_kam/{{ user.username }}" class="btn btn-info ml-3 mb-3"
+                target="__blank">Download Excel of {% now "F" %}'s Visits</a>
         </div>
         <div id="today_section" class="border p-4 mb-3 mt-3">
             <div class="float-right row">
@@ -167,7 +167,7 @@
             <div id="calendar"></div>
         </div>
         <div id="summary_section" class="border p-4 mb-3 mt-3">
-            <h2>Summary</h2>
+            <h2><i class="fas fa-tasks mr-3 text-primary"></i>Summary</h2>
             <hr>
             <div id="company_list">
 
