@@ -126,7 +126,7 @@
         <h2 class="mb-4 mt-4"><i class="fas fa-calendar-day mr-3 text-info"></i>Visiting</h2>
         <div id="leader_options" hidden>
             <a id="download_excel_btn" href="../download_full_excel/" class="btn btn-info ml-3 mb-3" href="#"
-                target="__blank">Download Visting Excel</a>
+                target="__blank"><span class="h4 p-3"><i class="far fa-file-excel mr-2"></i>Download Excel for All KAMs</span></a>
             <br>
             <label>Select a KAM ID: </label>
             <select class="form-control select2 col-md-5" id="kam_ids" onchange="changeSelectedKAM(this.value)">
@@ -365,8 +365,9 @@
         } else if ($('#role').text() == "Manager") {
             // // console.log("This user is a manager.");
             $('#today_section').hide();
-            $('#submit_new_visit_button').attr('onclick', 'createManagerVisit()');
             $('#create_new_vis_btn').hide();
+            $('#submit_new_visit_button').attr('onclick', 'createManagerVisit()');
+            $('#download_kam_excel_btn').hide();
             generateManagerOptions();
         }
 
@@ -651,7 +652,11 @@
         $('#username').text(kam_id);
         // // console.log($('#username').text());
         // // console.log(kam_id);
+        $('#download_kam_excel_btn').show();
         $('#create_new_vis_btn').show();
+        $('#download_kam_excel_btn').attr('href', '../download_excel_kam/' + kam_id);
+        $('#download_kam_excel_btn').html(`<i class="far fa-file-excel mr-2"></i> Download Current Month Excel for: <b>` + kam_id + `</b>`);
+
 
         $.get("../__get_companies_for_kam",
             {
