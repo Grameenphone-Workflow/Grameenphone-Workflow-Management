@@ -131,6 +131,51 @@ def download_full_excel(request):
     response['Content-Disposition'] = 'attachment; filename="{0}_{1}.xlsx"'.format( datetime.now().strftime("%B"), datetime.now().year)
     return response
 
+def download_excel_kam(request, kam_id):
+    workbook = xlsxwriter.Workbook('data/visiting_excels/{0}_{1}_{2}.xlsx'.format(kam_id, datetime.now().strftime("%B"), datetime.now().year))
+    worksheet = workbook.add_worksheet()
+
+    visits = Visit.objects.filter(kam_id=kam_id)
+    visits = visits.filter(date_of_visit__month__gte=datetime.now().month)
+
+    print(visits)
+    data = []
+    for visit in visits:
+        data.append({
+            'company_name': visit.company_name,
+            'date': visit.date_of_visit.strftime('%d-%m-%Y'),
+            'purpose': visit.visit_type,
+            'visited': "Completed" if visit.visited else "Planned",
+            'post_visit_feedback': visit.status,
+            'visit_start_remark': visit.visit_start_remark,
+            'visit_close_remark': visit.visit_close_remark,
+        })
+
+    my_list = data
+
+    worksheet.write(0, 0, 'Company')
+    worksheet.write(0, 1, 'Visit Date')
+    worksheet.write(0, 2, 'Status')
+    worksheet.write(0, 3, 'Purpose')
+    worksheet.write(0, 4, 'Feedback')
+    worksheet.write(0, 5, 'Initial Remark')
+    worksheet.write(0, 6, 'Closing Remark')
+
+    for row_num, data in enumerate(my_list):
+        worksheet.write(row_num + 1, 0, data['company_name'])
+        worksheet.write(row_num + 1, 1, data['date'])
+        worksheet.write(row_num + 1, 2, data['visited'])
+        worksheet.write(row_num + 1, 3, data['purpose'])
+        worksheet.write(row_num + 1, 4, data['post_visit_feedback'])
+        worksheet.write(row_num + 1, 5, data['visit_start_remark'])
+        worksheet.write(row_num + 1, 6, data['visit_close_remark'])
+    
+    workbook.close()
+
+    response = HttpResponse(open('data/visiting_excels/{0}_{1}_{2}.xlsx'.format(kam_id, datetime.now().strftime("%B"), datetime.now().year), 'rb'), content_type='vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="{0}_{1}_{2}.xlsx"'.format(kam_id, datetime.now().strftime("%B"), datetime.now().year)
+    return response
+
 def __get_companies_for_kam(request):
     # kam_id = request.GET.get('kam_id')
     # companies = list(Onboarding.objects.values())

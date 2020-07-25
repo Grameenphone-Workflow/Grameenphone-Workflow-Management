@@ -20,5 +20,6 @@ urlpatterns = [
     path('__get_kamids_manager/', fieldops.views.__get_kamids_manager, name="__get_kamids_manager"),
     path('__get_kamids_leader/', fieldops.views.__get_kamids_leader, name="__get_kamids_leader"),
     path('download_excel/<kam_id>', fieldops.views.download_excel, name="download_excel"),
+    path('download_excel_kam/<kam_id>', fieldops.views.download_excel_kam, name="download_excel_kam"),
     path('download_full_excel/', fieldops.views.download_full_excel, name="download_full_excel"),
 ]
