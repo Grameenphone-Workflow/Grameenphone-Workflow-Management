@@ -360,6 +360,7 @@ def __get_visits_for_kam(request):
                 'visiting_id': visit.visit_id,
                 'purpose': visit.visit_type,
                 'remarks': visit.visit_start_remark,
+                'color': "purple" if visit.manager else "red",
             }
         )
     return JsonResponse(data, safe=False)
