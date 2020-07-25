@@ -22,4 +22,5 @@ urlpatterns = [
     path('download_excel/<kam_id>', fieldops.views.download_excel, name="download_excel"),
     path('download_excel_kam/<kam_id>', fieldops.views.download_excel_kam, name="download_excel_kam"),
     path('download_full_excel/', fieldops.views.download_full_excel, name="download_full_excel"),
+    path('download_manager_excel/', fieldops.views.download_manager_excel, name="download_manager_excel"),
 ]
