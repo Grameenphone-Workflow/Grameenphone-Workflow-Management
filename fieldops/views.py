@@ -83,7 +83,7 @@ def download_full_excel(request):
     worksheet = workbook.add_worksheet()
 
     visits = Visit.objects.filter(date_of_visit__month__gte=datetime.now().month)
-    
+    visits = visits.filter(date_of_visit__year__gte=datetime.now().year)
     data = []
     for visit in visits:
         data.append({
@@ -135,6 +135,7 @@ def download_manager_excel(request):
     worksheet = workbook.add_worksheet()
 
     visits = Visit.objects.filter(date_of_visit__month__gte=datetime.now().month)
+    visits = visits.filter(date_of_visit__year__gte=datetime.now().year)
     kams = KAMTable.objects.filter(manager=request.session['user_phone_number'])
     kams = [ kam.username for kam in kams ]
     data = []
@@ -190,6 +191,7 @@ def download_excel_kam(request, kam_id):
 
     visits = Visit.objects.filter(kam_id=kam_id)
     visits = visits.filter(date_of_visit__month__gte=datetime.now().month)
+    visits = visits.filter(date_of_visit__year__gte=datetime.now().year)
 
     print(visits)
     data = []
