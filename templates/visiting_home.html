@@ -361,6 +361,8 @@
             $('#today_section').hide();
             $('#submit_new_visit_button').attr('onclick', 'createManagerVisit()');
             $('#create_new_vis_btn').hide();
+            $('#download_kam_excel_btn').hide();
+
             generateLeaderOptions();
         } else if ($('#role').text() == "Manager") {
             // // console.log("This user is a manager.");
@@ -368,6 +370,7 @@
             $('#create_new_vis_btn').hide();
             $('#submit_new_visit_button').attr('onclick', 'createManagerVisit()');
             $('#download_kam_excel_btn').hide();
+            $('#download_excel_btn').attr('href', '../download_manager_excel/');
             generateManagerOptions();
         }
 
